@@ -1,16 +1,13 @@
 package com.pagesofatlas.babymobs;
 
-import net.fabricmc.fabric.api.event.lifecycle.v1.EntityLoadData;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.EnderMan;
 
 public final class BabyEndermen {
-    private static final float NATURAL_BABY_CHANCE = 0.08F;
+    static final float NATURAL_BABY_CHANCE = 0.08F;
 
     private static final Identifier BABY_SCALE_ID =
             Identifier.fromNamespaceAndPath(BabyMobs.MOD_ID, "baby_enderman_scale");
@@ -43,30 +40,6 @@ public final class BabyEndermen {
             );
 
     private BabyEndermen() {
-    }
-
-    public static void register() {
-        ServerEntityEvents.ENTITY_LOAD.register((entity, level) -> {
-            if (!(entity instanceof EnderMan enderman)) {
-                return;
-            }
-
-            EntityLoadData loadData = (EntityLoadData) entity;
-
-            // Never reroll Endermen loaded from disk.
-            if (loadData.isLoadedFromDisk()) {
-                return;
-            }
-
-            // Only naturally spawned Endermen participate in the 8% roll.
-            if (loadData.spawnReason() != EntitySpawnReason.NATURAL) {
-                return;
-            }
-
-            if (enderman.getRandom().nextFloat() < NATURAL_BABY_CHANCE) {
-                applyBaby(enderman);
-            }
-        });
     }
 
     public static void applyBaby(EnderMan enderman) {

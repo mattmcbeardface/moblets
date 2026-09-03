@@ -10,9 +10,7 @@ public final class BabyMobs implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        BabySkeletons.register();
-        BabyCreepers.register();
-        BabyEndermen.register();
+        BabyMobSpawns.register();
         BabyMobCommands.register();
 
         LOGGER.info("Baby Mobs initialized.");

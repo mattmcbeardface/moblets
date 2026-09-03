@@ -1,17 +1,16 @@
 package com.pagesofatlas.babymobs;
 
 import com.pagesofatlas.babymobs.mixin.CreeperAccessor;
-import net.fabricmc.fabric.api.event.lifecycle.v1.EntityLoadData;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Creeper;
 
 public final class BabyCreepers {
-    private static final float NATURAL_BABY_CHANCE = 0.08F;
+    static final float NATURAL_BABY_CHANCE = 0.08F;
+
+    private static final int BABY_EXPLOSION_RADIUS = 2;
 
     private static final Identifier BABY_SCALE_ID =
             Identifier.fromNamespaceAndPath(BabyMobs.MOD_ID, "baby_creeper_scale");
@@ -36,28 +35,6 @@ public final class BabyCreepers {
     private BabyCreepers() {
     }
 
-    public static void register() {
-        ServerEntityEvents.ENTITY_LOAD.register((entity, level) -> {
-            if (!(entity instanceof Creeper creeper)) {
-                return;
-            }
-
-            EntityLoadData loadData = (EntityLoadData) entity;
-
-            if (loadData.isLoadedFromDisk()) {
-                return;
-            }
-
-            if (loadData.spawnReason() != EntitySpawnReason.NATURAL) {
-                return;
-            }
-
-            if (creeper.getRandom().nextFloat() < NATURAL_BABY_CHANCE) {
-                applyBaby(creeper);
-            }
-        });
-    }
-
     public static void applyBaby(Creeper creeper) {
         AttributeInstance scale = creeper.getAttribute(Attributes.SCALE);
         if (scale != null) {
@@ -69,7 +46,8 @@ public final class BabyCreepers {
             speed.addOrReplacePermanentModifier(BABY_SPEED);
         }
 
-        ((CreeperAccessor) creeper).babyMobs$setExplosionRadius(2);
+        ((CreeperAccessor) creeper)
+                .babyMobs$setExplosionRadius(BABY_EXPLOSION_RADIUS);
     }
 
     public static boolean isBaby(Creeper creeper) {
