@@ -197,6 +197,22 @@ public final class BabyMobCommands {
                                                                 BabyIronGolems::applyBaby
                                                         )))
                                         )
+                                        .then(Commands.literal("wandering_trader")
+                                                .then(Commands.literal("baby")
+                                                        .executes(context -> summon(
+                                                                context.getSource(),
+                                                                EntityTypes.WANDERING_TRADER,
+                                                                true,
+                                                                BabyWanderingTraders::applyBaby
+                                                        )))
+                                                .then(Commands.literal("adult")
+                                                        .executes(context -> summon(
+                                                                context.getSource(),
+                                                                EntityTypes.WANDERING_TRADER,
+                                                                false,
+                                                                BabyWanderingTraders::applyBaby
+                                                        )))
+                                        )
                                 )
                 )
         );

@@ -15,6 +15,7 @@ public final class BabyMobs implements ModInitializer {
         BabyPillagers.register();
         BabySnowGolems.register();
         BabyIronGolems.register();
+        BabyWanderingTraders.register();
 
         LOGGER.info("Baby Mobs initialized.");
     }
