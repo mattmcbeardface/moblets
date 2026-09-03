@@ -14,7 +14,11 @@
     ]
   },
   "mixins": [
-    "baby_mobs.mixins.json"
+    "baby_mobs.mixins.json",
+    {
+      "config": "baby_mobs.client.mixins.json",
+      "environment": "client"
+    }
   ],
   "depends": {
     "fabricloader": ">=0.19.3",
