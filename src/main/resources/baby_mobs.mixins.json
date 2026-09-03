@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_25",
   "mixins": [
     "AbstractSkeletonMixin",
+    "CreeperMixin",
     "CreeperAccessor",
     "ServerExplosionMixin",
     "WitchMixin",
