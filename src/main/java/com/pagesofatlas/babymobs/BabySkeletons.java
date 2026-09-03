@@ -19,6 +19,9 @@ public final class BabySkeletons {
     private static final Identifier BABY_WITHER_DAMAGE_ID =
             Identifier.fromNamespaceAndPath(BabyMobs.MOD_ID, "baby_wither_skeleton_damage");
 
+    private static final Identifier WOLF_LESSON_ID =
+            Identifier.fromNamespaceAndPath(BabyMobs.MOD_ID, "baby_skeleton_wolf_lesson");
+
     private static final AttributeModifier BABY_SCALE =
             new AttributeModifier(
                     BABY_SCALE_ID,
@@ -37,6 +40,19 @@ public final class BabySkeletons {
             new AttributeModifier(
                     BABY_WITHER_DAMAGE_ID,
                     -0.50D,
+                    AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
+            );
+
+    /*
+     * Zero-value permanent modifier used only as saved state.
+     *
+     * Once a Moblet Skeleton gets bitten by a wolf, this marker
+     * remembers that lesson even across save/reload.
+     */
+    private static final AttributeModifier WOLF_LESSON_MARKER =
+            new AttributeModifier(
+                    WOLF_LESSON_ID,
+                    0.0D,
                     AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
             );
 
@@ -67,5 +83,26 @@ public final class BabySkeletons {
     public static boolean isBaby(AbstractSkeleton skeleton) {
         AttributeInstance scale = skeleton.getAttribute(Attributes.SCALE);
         return scale != null && scale.hasModifier(BABY_SCALE_ID);
+    }
+
+    public static void learnWolfLesson(AbstractSkeleton skeleton) {
+        AttributeInstance speed =
+                skeleton.getAttribute(Attributes.MOVEMENT_SPEED);
+
+        if (speed != null) {
+            speed.addOrReplacePermanentModifier(
+                    WOLF_LESSON_MARKER
+            );
+        }
+    }
+
+    public static boolean hasLearnedWolfLesson(
+            AbstractSkeleton skeleton
+    ) {
+        AttributeInstance speed =
+                skeleton.getAttribute(Attributes.MOVEMENT_SPEED);
+
+        return speed != null
+                && speed.hasModifier(WOLF_LESSON_ID);
     }
 }
