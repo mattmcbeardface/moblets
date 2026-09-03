@@ -1,0 +1,44 @@
+plugins {
+	id 'net.fabricmc.fabric-loom' version "${loom_version}"
+}
+
+base {
+	archivesName = 'baby-mobs'
+}
+
+loom {
+	splitEnvironmentSourceSets()
+
+	mods {
+		"baby_mobs" {
+			sourceSet sourceSets.main
+			sourceSet sourceSets.client
+		}
+	}
+}
+
+dependencies {
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+}
+
+def modVersion = providers.gradleProperty("version").get()
+
+processResources {
+	inputs.property "version", modVersion
+
+	filesMatching("fabric.mod.json") {
+		expand "version": modVersion
+	}
+}
+
+tasks.withType(JavaCompile).configureEach {
+	options.release = 25
+}
+
+java {
+	withSourcesJar()
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
+}
