@@ -8,6 +8,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.monster.Creeper;
+import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.monster.skeleton.Skeleton;
 
 public final class BabyMobCommands {
@@ -37,6 +38,15 @@ public final class BabyMobCommands {
                                             .then(Commands.literal("adult")
                                                     .executes(context ->
                                                             summonCreeper(context.getSource(), false)))
+                                    )
+
+                                    .then(Commands.literal("enderman")
+                                            .then(Commands.literal("baby")
+                                                    .executes(context ->
+                                                            summonEnderman(context.getSource(), true)))
+                                            .then(Commands.literal("adult")
+                                                    .executes(context ->
+                                                            summonEnderman(context.getSource(), false)))
                                     )
                             )
             );
@@ -86,6 +96,26 @@ public final class BabyMobCommands {
 
         if (baby) {
             BabyCreepers.applyBaby(creeper);
+        }
+
+        return 1;
+    }
+
+    private static int summonEnderman(CommandSourceStack source, boolean baby) {
+        ServerLevel level = source.getLevel();
+
+        EnderMan enderman = EntityTypes.ENDERMAN.spawn(
+                level,
+                getSpawnPos(source),
+                EntitySpawnReason.COMMAND
+        );
+
+        if (enderman == null) {
+            return 0;
+        }
+
+        if (baby) {
+            BabyEndermen.applyBaby(enderman);
         }
 
         return 1;

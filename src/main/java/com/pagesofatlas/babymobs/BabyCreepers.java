@@ -22,7 +22,7 @@ public final class BabyCreepers {
     private static final AttributeModifier BABY_SCALE =
             new AttributeModifier(
                     BABY_SCALE_ID,
-                    -0.45D,
+                    -0.50D,
                     AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
             );
 

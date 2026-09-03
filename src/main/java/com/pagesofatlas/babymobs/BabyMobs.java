@@ -12,6 +12,7 @@ public final class BabyMobs implements ModInitializer {
     public void onInitialize() {
         BabySkeletons.register();
         BabyCreepers.register();
+        BabyEndermen.register();
         BabyMobCommands.register();
 
         LOGGER.info("Baby Mobs initialized.");
