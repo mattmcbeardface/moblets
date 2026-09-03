@@ -3,7 +3,7 @@ plugins {
 }
 
 base {
-	archivesName = 'baby-mobs'
+	archivesName = 'moblets'
 }
 
 loom {

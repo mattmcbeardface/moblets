@@ -47,7 +47,7 @@ public final class BabySnowGolems {
      * Adult Snow Golems that are currently loaded.
      *
      * We continually make sure a loaded adult has at least one nearby
-     * Baby Mobs Snow Golem. Several adults in the same area share the
+     * Moblets Snow Golem. Several adults in the same area share the
      * same baby population instead of each creating their own.
      */
     private static final Set<SnowGolem> WATCHED_ADULTS =

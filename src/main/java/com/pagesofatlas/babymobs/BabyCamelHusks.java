@@ -149,7 +149,7 @@ public final class BabyCamelHusks {
 
             /*
              * Parched is part of the AbstractSkeleton family, for which
-             * Baby Mobs already has a complete custom baby implementation.
+             * Moblets already has a complete custom baby implementation.
              */
             if (passenger instanceof AbstractSkeleton skeleton
                     && passenger.getType() == EntityTypes.PARCHED) {

@@ -1,6 +1,6 @@
-# Baby Mobs
+# Moblets
 
-Baby Mobs adds custom baby variants of Minecraft mobs while preserving the identity and behavior of the original mobs.
+Moblets adds custom baby variants of Minecraft mobs while preserving the identity and behavior of the original mobs.
 
 These are more than simply scaled-down models. Baby variants can have their own proportions, movement speeds, damage, accuracy, spawning rules, and encounter behavior.
 
@@ -62,14 +62,14 @@ Examples include:
 - weaker Witch potion attacks
 - custom encounter and companion spawning
 
-Existing vanilla baby mobs such as Zombie Villagers, Drowned, and Husks are not replaced by Baby Mobs.
+Existing vanilla baby mobs such as Zombie Villagers, Drowned, and Husks are not replaced by Moblets.
 
 ## Commands
 
-Baby Mobs includes summon commands for testing and administration:
+Moblets includes summon commands for testing and administration:
 
-    /babymobs summon <mob> baby
-    /babymobs summon <mob> adult
+    /moblets summon <mob> baby
+    /moblets summon <mob> adult
 
 Supported command names:
 
@@ -94,11 +94,11 @@ Supported command names:
 - Fabric API 0.158.0+26.2 or newer
 - Java 25
 
-For multiplayer, install Baby Mobs and Fabric API on the server and participating clients.
+For multiplayer, install Moblets and Fabric API on the server and participating clients.
 
 ## Resource Packs
 
-Baby Mobs uses Minecraft's existing entity types rather than replacing mobs with entirely new entity registrations.
+Moblets uses Minecraft's existing entity types rather than replacing mobs with entirely new entity registrations.
 
 Its custom baby rendering is designed to remain compatible with resource packs and custom entity textures/models as much as possible.
 
@@ -114,4 +114,4 @@ The release JAR is produced in:
 
 ## Disclaimer
 
-Baby Mobs is an unofficial Minecraft mod and is not affiliated with or endorsed by Mojang Studios or Microsoft.
+Moblets is an unofficial Minecraft mod and is not affiliated with or endorsed by Mojang Studios or Microsoft.

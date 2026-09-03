@@ -19,7 +19,7 @@ public final class BabyMobCommands {
     public static void register() {
         CommandRegistrationCallback.EVENT.register((dispatcher, buildContext, selection) ->
                 dispatcher.register(
-                        Commands.literal("babymobs")
+                        Commands.literal("moblets")
                                 .then(Commands.literal("summon")
                                         .then(Commands.literal("skeleton")
                                                 .then(Commands.literal("baby")

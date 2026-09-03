@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "baby_mobs",
   "version": "${version}",
-  "name": "Baby Mobs",
+  "name": "Moblets",
   "description": "Adds custom baby variants of Minecraft mobs with unique spawning, proportions, and behavior.",
   "authors": [
     "Pages of Atlas"
