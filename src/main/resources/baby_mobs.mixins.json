@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "package": "com.pagesofatlas.babymobs.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "mixins": [
+    "AbstractSkeletonMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
