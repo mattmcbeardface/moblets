@@ -7,17 +7,15 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.monster.Witch;
-import net.minecraft.world.entity.monster.skeleton.Skeleton;
+import net.minecraft.world.entity.monster.skeleton.AbstractSkeleton;
 
 public final class BabyMobSpawns {
-
     private BabyMobSpawns() {
     }
 
     public static void register() {
         ServerEntityEvents.ENTITY_LOAD.register((entity, level) -> {
-            // Ignore everything Baby Mobs does not currently support.
-            if (!(entity instanceof Skeleton)
+            if (!(entity instanceof AbstractSkeleton)
                     && !(entity instanceof Creeper)
                     && !(entity instanceof EnderMan)
                     && !(entity instanceof Witch)) {
@@ -26,17 +24,15 @@ public final class BabyMobSpawns {
 
             EntityLoadData loadData = (EntityLoadData) entity;
 
-            // Existing entities retain whatever state they were saved with.
             if (loadData.isLoadedFromDisk()) {
                 return;
             }
 
-            // Commands, spawn eggs, spawners, etc. remain adults.
             if (loadData.spawnReason() != EntitySpawnReason.NATURAL) {
                 return;
             }
 
-            if (entity instanceof Skeleton skeleton) {
+            if (entity instanceof AbstractSkeleton skeleton) {
                 if (roll(skeleton, BabySkeletons.NATURAL_BABY_CHANCE)) {
                     BabySkeletons.applyBaby(skeleton);
                 }

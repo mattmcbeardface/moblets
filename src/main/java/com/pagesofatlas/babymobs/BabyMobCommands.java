@@ -85,6 +85,70 @@ public final class BabyMobCommands {
                                                                 BabyWitches::applyBaby
                                                         )))
                                         )
+                                        .then(Commands.literal("stray")
+                                                .then(Commands.literal("baby")
+                                                        .executes(context -> summon(
+                                                                context.getSource(),
+                                                                EntityTypes.STRAY,
+                                                                true,
+                                                                BabySkeletons::applyBaby
+                                                        )))
+                                                .then(Commands.literal("adult")
+                                                        .executes(context -> summon(
+                                                                context.getSource(),
+                                                                EntityTypes.STRAY,
+                                                                false,
+                                                                BabySkeletons::applyBaby
+                                                        )))
+                                        )
+                                        .then(Commands.literal("bogged")
+                                                .then(Commands.literal("baby")
+                                                        .executes(context -> summon(
+                                                                context.getSource(),
+                                                                EntityTypes.BOGGED,
+                                                                true,
+                                                                BabySkeletons::applyBaby
+                                                        )))
+                                                .then(Commands.literal("adult")
+                                                        .executes(context -> summon(
+                                                                context.getSource(),
+                                                                EntityTypes.BOGGED,
+                                                                false,
+                                                                BabySkeletons::applyBaby
+                                                        )))
+                                        )
+                                        .then(Commands.literal("parched")
+                                                .then(Commands.literal("baby")
+                                                        .executes(context -> summon(
+                                                                context.getSource(),
+                                                                EntityTypes.PARCHED,
+                                                                true,
+                                                                BabySkeletons::applyBaby
+                                                        )))
+                                                .then(Commands.literal("adult")
+                                                        .executes(context -> summon(
+                                                                context.getSource(),
+                                                                EntityTypes.PARCHED,
+                                                                false,
+                                                                BabySkeletons::applyBaby
+                                                        )))
+                                        )
+                                        .then(Commands.literal("wither_skeleton")
+                                                .then(Commands.literal("baby")
+                                                        .executes(context -> summon(
+                                                                context.getSource(),
+                                                                EntityTypes.WITHER_SKELETON,
+                                                                true,
+                                                                BabySkeletons::applyBaby
+                                                        )))
+                                                .then(Commands.literal("adult")
+                                                        .executes(context -> summon(
+                                                                context.getSource(),
+                                                                EntityTypes.WITHER_SKELETON,
+                                                                false,
+                                                                BabySkeletons::applyBaby
+                                                        )))
+                                        )
                                 )
                 )
         );

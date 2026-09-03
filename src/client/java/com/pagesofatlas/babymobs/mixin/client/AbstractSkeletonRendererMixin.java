@@ -5,7 +5,6 @@ import com.pagesofatlas.babymobs.client.BabyVariantRenderState;
 import net.minecraft.client.renderer.entity.AbstractSkeletonRenderer;
 import net.minecraft.client.renderer.entity.state.SkeletonRenderState;
 import net.minecraft.world.entity.monster.skeleton.AbstractSkeleton;
-import net.minecraft.world.entity.monster.skeleton.Skeleton;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -18,15 +17,13 @@ public abstract class AbstractSkeletonRendererMixin {
             method = "extractRenderState(Lnet/minecraft/world/entity/monster/skeleton/AbstractSkeleton;Lnet/minecraft/client/renderer/entity/state/SkeletonRenderState;F)V",
             at = @At("TAIL")
     )
-    private void babyMobs$markBabySkeleton(
+    private void babyMobs$markBabySkeletonFamily(
             AbstractSkeleton entity,
             SkeletonRenderState state,
             float partialTicks,
             CallbackInfo ci
     ) {
-        boolean baby = entity instanceof Skeleton skeleton
-                && BabySkeletons.isBaby(skeleton);
-
-        ((BabyVariantRenderState) state).babyMobs$setBabyVariant(baby);
+        ((BabyVariantRenderState) state)
+                .babyMobs$setBabyVariant(BabySkeletons.isBaby(entity));
     }
 }
