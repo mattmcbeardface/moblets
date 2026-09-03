@@ -9,7 +9,9 @@
     "CreeperModelMixin",
     "EndermanModelMixin",
     "AbstractSkeletonRendererMixin",
-    "SkeletonModelMixin"
+    "SkeletonModelMixin",
+    "WitchRendererMixin",
+    "WitchModelMixin"
   ],
   "injectors": {
     "defaultRequire": 1

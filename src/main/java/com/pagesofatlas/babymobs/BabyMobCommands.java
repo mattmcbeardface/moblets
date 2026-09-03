@@ -69,6 +69,22 @@ public final class BabyMobCommands {
                                                                 BabyEndermen::applyBaby
                                                         )))
                                         )
+                                        .then(Commands.literal("witch")
+                                                .then(Commands.literal("baby")
+                                                        .executes(context -> summon(
+                                                                context.getSource(),
+                                                                EntityTypes.WITCH,
+                                                                true,
+                                                                BabyWitches::applyBaby
+                                                        )))
+                                                .then(Commands.literal("adult")
+                                                        .executes(context -> summon(
+                                                                context.getSource(),
+                                                                EntityTypes.WITCH,
+                                                                false,
+                                                                BabyWitches::applyBaby
+                                                        )))
+                                        )
                                 )
                 )
         );

@@ -5,7 +5,9 @@
   "mixins": [
     "AbstractSkeletonMixin",
     "CreeperAccessor",
-    "ServerExplosionMixin"
+    "ServerExplosionMixin",
+    "WitchMixin",
+    "ThrownSplashPotionMixin"
   ],
   "injectors": {
     "defaultRequire": 1

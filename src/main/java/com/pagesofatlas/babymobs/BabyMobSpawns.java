@@ -6,6 +6,7 @@ import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.EnderMan;
+import net.minecraft.world.entity.monster.Witch;
 import net.minecraft.world.entity.monster.skeleton.Skeleton;
 
 public final class BabyMobSpawns {
@@ -18,7 +19,8 @@ public final class BabyMobSpawns {
             // Ignore everything Baby Mobs does not currently support.
             if (!(entity instanceof Skeleton)
                     && !(entity instanceof Creeper)
-                    && !(entity instanceof EnderMan)) {
+                    && !(entity instanceof EnderMan)
+                    && !(entity instanceof Witch)) {
                 return;
             }
 
@@ -48,9 +50,16 @@ public final class BabyMobSpawns {
                 return;
             }
 
-            if (entity instanceof EnderMan enderman
-                    && roll(enderman, BabyEndermen.NATURAL_BABY_CHANCE)) {
-                BabyEndermen.applyBaby(enderman);
+            if (entity instanceof EnderMan enderman) {
+                if (roll(enderman, BabyEndermen.NATURAL_BABY_CHANCE)) {
+                    BabyEndermen.applyBaby(enderman);
+                }
+                return;
+            }
+
+            if (entity instanceof Witch witch
+                    && roll(witch, BabyWitches.NATURAL_BABY_CHANCE)) {
+                BabyWitches.applyBaby(witch);
             }
         });
     }
