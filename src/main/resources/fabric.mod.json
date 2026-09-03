@@ -3,7 +3,7 @@
   "id": "baby_mobs",
   "version": "${version}",
   "name": "Baby Mobs",
-  "description": "Adds baby variants of hostile Minecraft mobs.",
+  "description": "Adds custom baby variants of Minecraft mobs with unique spawning, proportions, and behavior.",
   "authors": [
     "Pages of Atlas"
   ],

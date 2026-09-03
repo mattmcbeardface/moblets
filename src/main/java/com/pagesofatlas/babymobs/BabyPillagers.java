@@ -48,7 +48,7 @@ public final class BabyPillagers {
             );
 
     /*
-     * Pillagers are queued until END_WORLD_TICK.
+     * Pillagers are queued until END_SERVER_TICK.
      *
      * This is intentional. During chunk loading we want all of an
      * outpost's already-existing baby Pillagers to be loaded before
