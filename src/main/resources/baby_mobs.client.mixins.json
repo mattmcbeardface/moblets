@@ -13,7 +13,9 @@
     "WitchRendererMixin",
     "WitchModelMixin",
     "IllagerRendererMixin",
-    "IllagerModelMixin"
+    "IllagerModelMixin",
+    "SnowGolemRendererMixin",
+    "SnowGolemModelMixin"
   ],
   "injectors": {
     "defaultRequire": 1

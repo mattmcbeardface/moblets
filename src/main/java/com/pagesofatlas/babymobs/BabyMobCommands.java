@@ -165,6 +165,22 @@ public final class BabyMobCommands {
                                                                 BabyPillagers::applyBaby
                                                         )))
                                         )
+                                        .then(Commands.literal("snow_golem")
+                                                .then(Commands.literal("baby")
+                                                        .executes(context -> summon(
+                                                                context.getSource(),
+                                                                EntityTypes.SNOW_GOLEM,
+                                                                true,
+                                                                BabySnowGolems::applyBaby
+                                                        )))
+                                                .then(Commands.literal("adult")
+                                                        .executes(context -> summon(
+                                                                context.getSource(),
+                                                                EntityTypes.SNOW_GOLEM,
+                                                                false,
+                                                                BabySnowGolems::applyBaby
+                                                        )))
+                                        )
                                 )
                 )
         );
