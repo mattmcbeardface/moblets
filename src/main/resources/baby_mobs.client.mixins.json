@@ -11,7 +11,9 @@
     "AbstractSkeletonRendererMixin",
     "SkeletonModelMixin",
     "WitchRendererMixin",
-    "WitchModelMixin"
+    "WitchModelMixin",
+    "IllagerRendererMixin",
+    "IllagerModelMixin"
   ],
   "injectors": {
     "defaultRequire": 1

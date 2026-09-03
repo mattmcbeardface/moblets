@@ -7,7 +7,9 @@
     "CreeperAccessor",
     "ServerExplosionMixin",
     "WitchMixin",
-    "ThrownSplashPotionMixin"
+    "ThrownSplashPotionMixin",
+    "PillagerMixin",
+    "AbstractArrowMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -149,6 +149,22 @@ public final class BabyMobCommands {
                                                                 BabySkeletons::applyBaby
                                                         )))
                                         )
+                                        .then(Commands.literal("pillager")
+                                                .then(Commands.literal("baby")
+                                                        .executes(context -> summon(
+                                                                context.getSource(),
+                                                                EntityTypes.PILLAGER,
+                                                                true,
+                                                                BabyPillagers::applyBaby
+                                                        )))
+                                                .then(Commands.literal("adult")
+                                                        .executes(context -> summon(
+                                                                context.getSource(),
+                                                                EntityTypes.PILLAGER,
+                                                                false,
+                                                                BabyPillagers::applyBaby
+                                                        )))
+                                        )
                                 )
                 )
         );
