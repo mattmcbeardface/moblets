@@ -10,7 +10,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.skeleton.Skeleton;
 
 public final class BabySkeletons {
-    private static final float NATURAL_BABY_CHANCE = 0.05F;
+    private static final float NATURAL_BABY_CHANCE = 0.08F;
 
     private static final Identifier BABY_SCALE_ID =
             Identifier.fromNamespaceAndPath(BabyMobs.MOD_ID, "baby_skeleton_scale");
