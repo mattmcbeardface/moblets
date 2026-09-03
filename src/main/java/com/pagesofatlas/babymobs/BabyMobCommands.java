@@ -213,6 +213,22 @@ public final class BabyMobCommands {
                                                                 BabyWanderingTraders::applyBaby
                                                         )))
                                         )
+                                        .then(Commands.literal("camel_husk")
+                                                .then(Commands.literal("baby")
+                                                        .executes(context -> summon(
+                                                                context.getSource(),
+                                                                EntityTypes.CAMEL_HUSK,
+                                                                true,
+                                                                BabyCamelHusks::applyBaby
+                                                        )))
+                                                .then(Commands.literal("adult")
+                                                        .executes(context -> summon(
+                                                                context.getSource(),
+                                                                EntityTypes.CAMEL_HUSK,
+                                                                false,
+                                                                BabyCamelHusks::applyBaby
+                                                        )))
+                                        )
                                 )
                 )
         );

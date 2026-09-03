@@ -4,6 +4,7 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.EntityLoadData;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.animal.camel.CamelHusk;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.monster.Witch;
@@ -18,7 +19,8 @@ public final class BabyMobSpawns {
             if (!(entity instanceof AbstractSkeleton)
                     && !(entity instanceof Creeper)
                     && !(entity instanceof EnderMan)
-                    && !(entity instanceof Witch)) {
+                    && !(entity instanceof Witch)
+                    && !(entity instanceof CamelHusk)) {
                 return;
             }
 
@@ -53,9 +55,19 @@ public final class BabyMobSpawns {
                 return;
             }
 
-            if (entity instanceof Witch witch
-                    && roll(witch, BabyWitches.NATURAL_BABY_CHANCE)) {
-                BabyWitches.applyBaby(witch);
+            if (entity instanceof Witch witch) {
+                if (roll(witch, BabyWitches.NATURAL_BABY_CHANCE)) {
+                    BabyWitches.applyBaby(witch);
+                }
+                return;
+            }
+
+            if (entity instanceof CamelHusk camelHusk
+                    && roll(
+                            camelHusk,
+                            BabyCamelHusks.NATURAL_BABY_CHANCE
+                    )) {
+                BabyCamelHusks.applyBaby(camelHusk);
             }
         });
     }

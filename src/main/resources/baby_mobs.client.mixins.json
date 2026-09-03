@@ -20,7 +20,9 @@
     "IronGolemModelMixin",
     "WanderingTraderRendererMixin",
     "VillagerModelMixin",
-    "TraderLlamaLeashRendererMixin"
+    "TraderLlamaLeashRendererMixin",
+    "CamelHuskRendererMixin",
+    "CamelModelMixin"
   ],
   "injectors": {
     "defaultRequire": 1
