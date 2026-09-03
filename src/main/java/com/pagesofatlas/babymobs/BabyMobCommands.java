@@ -7,6 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.skeleton.Skeleton;
 
 public final class BabyMobCommands {
@@ -19,6 +20,7 @@ public final class BabyMobCommands {
             dispatcher.register(
                     Commands.literal("babymobs")
                             .then(Commands.literal("summon")
+
                                     .then(Commands.literal("skeleton")
                                             .then(Commands.literal("baby")
                                                     .executes(context ->
@@ -27,23 +29,34 @@ public final class BabyMobCommands {
                                                     .executes(context ->
                                                             summonSkeleton(context.getSource(), false)))
                                     )
+
+                                    .then(Commands.literal("creeper")
+                                            .then(Commands.literal("baby")
+                                                    .executes(context ->
+                                                            summonCreeper(context.getSource(), true)))
+                                            .then(Commands.literal("adult")
+                                                    .executes(context ->
+                                                            summonCreeper(context.getSource(), false)))
+                                    )
                             )
             );
         });
     }
 
-    private static int summonSkeleton(CommandSourceStack source, boolean baby) {
-        ServerLevel level = source.getLevel();
-
-        BlockPos pos = BlockPos.containing(
+    private static BlockPos getSpawnPos(CommandSourceStack source) {
+        return BlockPos.containing(
                 source.getPosition().x,
                 source.getPosition().y,
                 source.getPosition().z
         );
+    }
+
+    private static int summonSkeleton(CommandSourceStack source, boolean baby) {
+        ServerLevel level = source.getLevel();
 
         Skeleton skeleton = EntityTypes.SKELETON.spawn(
                 level,
-                pos,
+                getSpawnPos(source),
                 EntitySpawnReason.COMMAND
         );
 
@@ -53,6 +66,26 @@ public final class BabyMobCommands {
 
         if (baby) {
             BabySkeletons.applyBaby(skeleton);
+        }
+
+        return 1;
+    }
+
+    private static int summonCreeper(CommandSourceStack source, boolean baby) {
+        ServerLevel level = source.getLevel();
+
+        Creeper creeper = EntityTypes.CREEPER.spawn(
+                level,
+                getSpawnPos(source),
+                EntitySpawnReason.COMMAND
+        );
+
+        if (creeper == null) {
+            return 0;
+        }
+
+        if (baby) {
+            BabyCreepers.applyBaby(creeper);
         }
 
         return 1;
