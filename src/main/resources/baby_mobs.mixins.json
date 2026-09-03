@@ -11,7 +11,12 @@
     "WitchMixin",
     "ThrownSplashPotionMixin",
     "PillagerMixin",
-    "AbstractArrowMixin"
+    "AbstractArrowMixin",
+    "EnderManDataAccessor",
+    "EnderManMixin",
+    "EndermanLookForPlayerGoalMixin",
+    "EndermanTakeBlockGoalMixin",
+    "EndermanLeaveBlockGoalMixin"
   ],
   "injectors": {
     "defaultRequire": 1

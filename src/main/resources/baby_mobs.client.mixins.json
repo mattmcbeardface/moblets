@@ -5,6 +5,7 @@
   "client": [
     "LivingEntityRenderStateMixin",
     "CreeperRendererMixin",
+    "LivingEntityRendererInvoker",
     "EndermanRendererMixin",
     "CreeperModelMixin",
     "EndermanModelMixin",

@@ -1,5 +1,6 @@
 package com.pagesofatlas.babymobs;
 
+import com.pagesofatlas.babymobs.mixin.EnderManDataAccessor;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -63,5 +64,15 @@ public final class BabyEndermen {
         AttributeInstance scale = enderman.getAttribute(Attributes.SCALE);
 
         return scale != null && scale.hasModifier(BABY_SCALE_ID);
+    }
+
+    public static void setCreepy(
+            EnderMan enderman,
+            boolean creepy
+    ) {
+        enderman.getEntityData().set(
+                EnderManDataAccessor.babyMobs$getDataCreepy(),
+                creepy
+        );
     }
 }
