@@ -15,7 +15,9 @@
     "IllagerRendererMixin",
     "IllagerModelMixin",
     "SnowGolemRendererMixin",
-    "SnowGolemModelMixin"
+    "SnowGolemModelMixin",
+    "IronGolemRendererMixin",
+    "IronGolemModelMixin"
   ],
   "injectors": {
     "defaultRequire": 1
