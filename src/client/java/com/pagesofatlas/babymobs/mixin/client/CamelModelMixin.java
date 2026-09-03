@@ -96,8 +96,11 @@ public abstract class CamelModelMixin {
         float bodyZ =
                 baby ? 1.05F : 1.0F;
 
-        float headScale =
-                baby ? 1.30F : 1.0F;
+        float headScaleXZ =
+                baby ? 0.95F : 1.0F;
+
+        float headScaleY =
+                baby ? 0.80F : 1.0F;
 
         float legLength =
                 baby ? 0.85F : 1.0F;
@@ -112,9 +115,9 @@ public abstract class CamelModelMixin {
         /*
          * Oversized juvenile head.
          */
-        this.babyMobs$head.xScale = headScale;
-        this.babyMobs$head.yScale = headScale;
-        this.babyMobs$head.zScale = headScale;
+        this.babyMobs$head.xScale = headScaleXZ;
+        this.babyMobs$head.yScale = headScaleY;
+        this.babyMobs$head.zScale = headScaleXZ;
 
         /*
          * Shorter legs while preserving their normal thickness.
