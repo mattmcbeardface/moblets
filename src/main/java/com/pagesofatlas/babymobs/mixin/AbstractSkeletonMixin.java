@@ -35,7 +35,7 @@ public abstract class AbstractSkeletonMixin {
 
         if (skeleton instanceof Skeleton normalSkeleton
                 && BabySkeletons.isBaby(normalSkeleton)) {
-            return 20.0F;
+            return 26.0F;
         }
 
         return vanillaInaccuracy;
