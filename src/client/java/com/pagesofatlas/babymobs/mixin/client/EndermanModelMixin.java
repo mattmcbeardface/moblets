@@ -27,7 +27,7 @@ public abstract class EndermanModelMixin {
         float headScale = baby ? 1.20F : 1.0F;
 
         model.head.xScale = headScale;
-        model.head.yScale = headScale;
+        model.head.yScale = 1.0F;
         model.head.zScale = headScale;
 
         // Shorter arms, but retain their normal thickness.
