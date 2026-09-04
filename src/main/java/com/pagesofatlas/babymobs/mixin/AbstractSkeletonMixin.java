@@ -2,7 +2,6 @@ package com.pagesofatlas.babymobs.mixin;
 
 import com.pagesofatlas.babymobs.BabySkeletons;
 import net.minecraft.world.entity.monster.skeleton.AbstractSkeleton;
-import net.minecraft.world.entity.monster.skeleton.Skeleton;
 import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
 import org.jspecify.annotations.Nullable;
@@ -33,8 +32,7 @@ public abstract class AbstractSkeletonMixin {
     private float babyMobs$makeBabySkeletonAimTerrible(float vanillaInaccuracy) {
         AbstractSkeleton skeleton = (AbstractSkeleton) (Object) this;
 
-        if (skeleton instanceof Skeleton normalSkeleton
-                && BabySkeletons.isBaby(normalSkeleton)) {
+        if (BabySkeletons.isBaby(skeleton)) {
             return 26.0F;
         }
 
@@ -56,8 +54,7 @@ public abstract class AbstractSkeletonMixin {
     ) {
         AbstractArrow arrow = this.getArrow(projectile, power, firingWeapon);
 
-        if (instance instanceof Skeleton normalSkeleton
-                && BabySkeletons.isBaby(normalSkeleton)) {
+        if (BabySkeletons.isBaby(instance)) {
             arrow.setBaseDamageFromMob(power * 0.5F);
         }
 
