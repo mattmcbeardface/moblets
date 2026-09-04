@@ -45,6 +45,17 @@ public final class BabyWanderingTraders {
             );
 
     /*
+     * Permanent marker placed on an adult once this caravan has
+     * received its ONE baby trader companion.
+     *
+     * The baby is now allowed to leave the caravan while pursuing
+     * customers, so proximity can no longer determine whether the
+     * adult needs another baby.
+     */
+    private static final String BABY_COMPANION_ASSIGNED_TAG =
+            "baby_mobs:baby_trader_companion_assigned";
+
+    /*
      * A vanilla wandering-trader caravan has a positive despawn timer.
      *
      * We watch loaded traders and ensure those caravans have one custom
@@ -130,8 +141,46 @@ public final class BabyWanderingTraders {
                 continue;
             }
 
-            if (!hasBabyTraderNearby(level, adult)) {
-                spawnBabyCaravan(level, adult);
+            /*
+             * One baby companion per adult trader lifetime.
+             *
+             * The salesman Moblet is allowed to wander far away while
+             * pursuing a customer. Once this adult has been assigned a
+             * baby, distance from that baby must never cause another one
+             * to spawn.
+             */
+            if (adult.entityTags()
+                    .contains(
+                            BABY_COMPANION_ASSIGNED_TAG
+                    )) {
+                continue;
+            }
+
+            /*
+             * Migration/compatibility case:
+             *
+             * If this adult already has a nearby baby from a world saved
+             * before this marker existed, adopt that relationship instead
+             * of spawning a duplicate.
+             */
+            if (hasBabyTraderNearby(
+                    level,
+                    adult
+            )) {
+                adult.addTag(
+                        BABY_COMPANION_ASSIGNED_TAG
+                );
+
+                continue;
+            }
+
+            if (spawnBabyCaravan(
+                    level,
+                    adult
+            )) {
+                adult.addTag(
+                        BABY_COMPANION_ASSIGNED_TAG
+                );
             }
         }
     }
@@ -155,7 +204,7 @@ public final class BabyWanderingTraders {
                 );
     }
 
-    private static void spawnBabyCaravan(
+    private static boolean spawnBabyCaravan(
             ServerLevel level,
             WanderingTrader adult
     ) {
@@ -208,8 +257,14 @@ public final class BabyWanderingTraders {
 
             spawnBabyLlamas(level, baby);
 
-            return;
+            return true;
         }
+
+        /*
+         * No valid spawn position this tick. Leave the adult unmarked
+         * so the server may try again later.
+         */
+        return false;
     }
 
     private static void spawnBabyLlamas(

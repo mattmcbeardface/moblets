@@ -16,7 +16,9 @@
     "EnderManMixin",
     "EndermanLookForPlayerGoalMixin",
     "EndermanTakeBlockGoalMixin",
-    "EndermanLeaveBlockGoalMixin"
+    "EndermanLeaveBlockGoalMixin",
+    "WanderingTraderMixin",
+    "ItemEntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1
