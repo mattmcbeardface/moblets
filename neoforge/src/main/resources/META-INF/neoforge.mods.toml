@@ -1,0 +1,30 @@
+modLoader="javafml"
+loaderVersion="[1,)"
+license="All Rights Reserved"
+
+[[mixins]]
+config="baby_mobs.mixins.json"
+
+[[mixins]]
+config="baby_mobs.client.mixins.json"
+
+[[mods]]
+modId="baby_mobs"
+version="${version}"
+displayName="Moblets"
+logoFile="assets/baby_mobs/icon.png"
+description='''Adds custom baby variants of Minecraft mobs with unique spawning, proportions, and behavior.'''
+
+[[dependencies.baby_mobs]]
+modId="neoforge"
+type="required"
+versionRange="[${neoforge_version},)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.baby_mobs]]
+modId="minecraft"
+type="required"
+versionRange="[${minecraft_version}]"
+ordering="NONE"
+side="BOTH"
