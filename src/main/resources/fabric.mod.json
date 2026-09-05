@@ -4,9 +4,6 @@
   "version": "${version}",
   "name": "Moblets",
   "description": "Adds custom baby variants of Minecraft mobs with unique spawning, proportions, and behavior.",
-  "authors": [
-    "Pages of Atlas"
-  ],
   "environment": "*",
   "entrypoints": {
     "main": [
