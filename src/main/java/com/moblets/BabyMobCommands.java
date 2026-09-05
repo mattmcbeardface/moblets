@@ -1,7 +1,7 @@
 package com.moblets;
 
 import java.util.function.Consumer;
-import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
@@ -16,9 +16,8 @@ public final class BabyMobCommands {
     private BabyMobCommands() {
     }
 
-    public static void register() {
-        CommandRegistrationCallback.EVENT.register((dispatcher, buildContext, selection) ->
-                dispatcher.register(
+    public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
+        dispatcher.register(
                         Commands.literal("moblets")
                                 .then(Commands.literal("summon")
                                         .then(Commands.literal("skeleton")
@@ -230,7 +229,6 @@ public final class BabyMobCommands {
                                                         )))
                                         )
                                 )
-                )
         );
     }
 
