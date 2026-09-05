@@ -10,10 +10,10 @@ public final class BabyWitches {
     static final float NATURAL_BABY_CHANCE = 0.08F;
 
     private static final Identifier BABY_SCALE_ID =
-            Identifier.fromNamespaceAndPath(BabyMobs.MOD_ID, "baby_witch_scale");
+            Identifier.fromNamespaceAndPath(Moblets.MOD_ID, "baby_witch_scale");
 
     private static final Identifier BABY_SPEED_ID =
-            Identifier.fromNamespaceAndPath(BabyMobs.MOD_ID, "baby_witch_speed");
+            Identifier.fromNamespaceAndPath(Moblets.MOD_ID, "baby_witch_speed");
 
     private static final AttributeModifier BABY_SCALE =
             new AttributeModifier(

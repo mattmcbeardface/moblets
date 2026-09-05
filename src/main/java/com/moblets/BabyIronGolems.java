@@ -19,19 +19,19 @@ import net.minecraft.world.entity.animal.golem.IronGolem;
 public final class BabyIronGolems {
     private static final Identifier BABY_SCALE_ID =
             Identifier.fromNamespaceAndPath(
-                    BabyMobs.MOD_ID,
+                    Moblets.MOD_ID,
                     "baby_iron_golem_scale"
             );
 
     private static final Identifier BABY_SPEED_ID =
             Identifier.fromNamespaceAndPath(
-                    BabyMobs.MOD_ID,
+                    Moblets.MOD_ID,
                     "baby_iron_golem_speed"
             );
 
     private static final Identifier BABY_DAMAGE_ID =
             Identifier.fromNamespaceAndPath(
-                    BabyMobs.MOD_ID,
+                    Moblets.MOD_ID,
                     "baby_iron_golem_damage"
             );
 

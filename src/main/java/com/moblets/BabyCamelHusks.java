@@ -22,13 +22,13 @@ public final class BabyCamelHusks {
 
     private static final Identifier BABY_SCALE_ID =
             Identifier.fromNamespaceAndPath(
-                    BabyMobs.MOD_ID,
+                    Moblets.MOD_ID,
                     "baby_camel_husk_scale"
             );
 
     private static final Identifier BABY_SPEED_ID =
             Identifier.fromNamespaceAndPath(
-                    BabyMobs.MOD_ID,
+                    Moblets.MOD_ID,
                     "baby_camel_husk_speed"
             );
 

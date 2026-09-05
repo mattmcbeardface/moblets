@@ -20,13 +20,13 @@ import net.minecraft.world.entity.npc.wanderingtrader.WanderingTrader;
 public final class BabyWanderingTraders {
     private static final Identifier BABY_SCALE_ID =
             Identifier.fromNamespaceAndPath(
-                    BabyMobs.MOD_ID,
+                    Moblets.MOD_ID,
                     "baby_wandering_trader_scale"
             );
 
     private static final Identifier BABY_SPEED_ID =
             Identifier.fromNamespaceAndPath(
-                    BabyMobs.MOD_ID,
+                    Moblets.MOD_ID,
                     "baby_wandering_trader_speed"
             );
 

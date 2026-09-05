@@ -18,13 +18,13 @@ import net.minecraft.world.level.levelgen.structure.StructureStart;
 
 public final class BabyPillagers {
     private static final Identifier BABY_SCALE_ID =
-            Identifier.fromNamespaceAndPath(BabyMobs.MOD_ID, "baby_pillager_scale");
+            Identifier.fromNamespaceAndPath(Moblets.MOD_ID, "baby_pillager_scale");
 
     private static final Identifier BABY_SPEED_ID =
-            Identifier.fromNamespaceAndPath(BabyMobs.MOD_ID, "baby_pillager_speed");
+            Identifier.fromNamespaceAndPath(Moblets.MOD_ID, "baby_pillager_speed");
 
     private static final Identifier BABY_DAMAGE_ID =
-            Identifier.fromNamespaceAndPath(BabyMobs.MOD_ID, "baby_pillager_damage");
+            Identifier.fromNamespaceAndPath(Moblets.MOD_ID, "baby_pillager_damage");
 
     private static final AttributeModifier BABY_SCALE =
             new AttributeModifier(

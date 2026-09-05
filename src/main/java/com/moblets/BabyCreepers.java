@@ -13,10 +13,10 @@ public final class BabyCreepers {
     private static final int BABY_EXPLOSION_RADIUS = 2;
 
     private static final Identifier BABY_SCALE_ID =
-            Identifier.fromNamespaceAndPath(BabyMobs.MOD_ID, "baby_creeper_scale");
+            Identifier.fromNamespaceAndPath(Moblets.MOD_ID, "baby_creeper_scale");
 
     private static final Identifier BABY_SPEED_ID =
-            Identifier.fromNamespaceAndPath(BabyMobs.MOD_ID, "baby_creeper_speed");
+            Identifier.fromNamespaceAndPath(Moblets.MOD_ID, "baby_creeper_speed");
 
     private static final AttributeModifier BABY_SCALE =
             new AttributeModifier(

@@ -11,16 +11,16 @@ public final class BabySkeletons {
     static final float NATURAL_BABY_CHANCE = 0.08F;
 
     private static final Identifier BABY_SCALE_ID =
-            Identifier.fromNamespaceAndPath(BabyMobs.MOD_ID, "baby_skeleton_scale");
+            Identifier.fromNamespaceAndPath(Moblets.MOD_ID, "baby_skeleton_scale");
 
     private static final Identifier BABY_SPEED_ID =
-            Identifier.fromNamespaceAndPath(BabyMobs.MOD_ID, "baby_skeleton_speed");
+            Identifier.fromNamespaceAndPath(Moblets.MOD_ID, "baby_skeleton_speed");
 
     private static final Identifier BABY_WITHER_DAMAGE_ID =
-            Identifier.fromNamespaceAndPath(BabyMobs.MOD_ID, "baby_wither_skeleton_damage");
+            Identifier.fromNamespaceAndPath(Moblets.MOD_ID, "baby_wither_skeleton_damage");
 
     private static final Identifier WOLF_LESSON_ID =
-            Identifier.fromNamespaceAndPath(BabyMobs.MOD_ID, "baby_skeleton_wolf_lesson");
+            Identifier.fromNamespaceAndPath(Moblets.MOD_ID, "baby_skeleton_wolf_lesson");
 
     private static final AttributeModifier BABY_SCALE =
             new AttributeModifier(
