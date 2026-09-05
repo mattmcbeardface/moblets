@@ -1,11 +1,10 @@
 package com.moblets;
 
+import net.minecraft.server.MinecraftServer;
 import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.Set;
 
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
@@ -60,19 +59,17 @@ public final class BabyCamelHusks {
     private BabyCamelHusks() {
     }
 
-    public static void register() {
-        ServerEntityEvents.ENTITY_LOAD.register((entity, level) -> {
-            if (entity instanceof CamelHusk camelHusk
-                    && isBaby(camelHusk)) {
-                TRACKED_BABIES.add(camelHusk);
-            }
-        });
+    public static void onEntityLoaded(Entity entity) {
+        if (entity instanceof CamelHusk camelHusk
+                && isBaby(camelHusk)) {
+            TRACKED_BABIES.add(camelHusk);
+        }
+    }
 
-        ServerTickEvents.END_SERVER_TICK.register(server -> {
-            for (ServerLevel level : server.getAllLevels()) {
-                maintainBabyRiders(level);
-            }
-        });
+    public static void onServerTick(MinecraftServer server) {
+        for (ServerLevel level : server.getAllLevels()) {
+            maintainBabyRiders(level);
+        }
     }
 
     public static void applyBaby(CamelHusk camelHusk) {

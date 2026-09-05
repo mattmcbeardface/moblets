@@ -1,12 +1,12 @@
 package com.moblets;
 
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.entity.Entity;
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Set;
 
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -60,18 +60,16 @@ public final class BabyPillagers {
     private BabyPillagers() {
     }
 
-    public static void register() {
-        ServerEntityEvents.ENTITY_LOAD.register((entity, level) -> {
-            if (entity instanceof Pillager pillager) {
-                PENDING.add(pillager);
-            }
-        });
+    public static void onEntityLoaded(Entity entity) {
+        if (entity instanceof Pillager pillager) {
+            PENDING.add(pillager);
+        }
+    }
 
-        ServerTickEvents.END_SERVER_TICK.register(server -> {
-            for (ServerLevel level : server.getAllLevels()) {
-                processPending(level);
-            }
-        });
+    public static void onServerTick(MinecraftServer server) {
+        for (ServerLevel level : server.getAllLevels()) {
+            processPending(level);
+        }
     }
 
     public static void applyBaby(Pillager pillager) {

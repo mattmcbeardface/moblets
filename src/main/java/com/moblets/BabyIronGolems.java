@@ -1,11 +1,11 @@
 package com.moblets;
 
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.entity.Entity;
 import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.Set;
 
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
@@ -68,18 +68,16 @@ public final class BabyIronGolems {
     private BabyIronGolems() {
     }
 
-    public static void register() {
-        ServerEntityEvents.ENTITY_LOAD.register((entity, level) -> {
-            if (entity instanceof IronGolem ironGolem) {
-                WATCHED_GOLEMS.add(ironGolem);
-            }
-        });
+    public static void onEntityLoaded(Entity entity) {
+        if (entity instanceof IronGolem ironGolem) {
+            WATCHED_GOLEMS.add(ironGolem);
+        }
+    }
 
-        ServerTickEvents.END_SERVER_TICK.register(server -> {
-            for (ServerLevel level : server.getAllLevels()) {
-                maintainBabyPopulation(level);
-            }
-        });
+    public static void onServerTick(MinecraftServer server) {
+        for (ServerLevel level : server.getAllLevels()) {
+            maintainBabyPopulation(level);
+        }
     }
 
     public static void applyBaby(IronGolem ironGolem) {
