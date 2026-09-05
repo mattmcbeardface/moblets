@@ -10,7 +10,7 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "com.pagesofatlas.babymobs.BabyMobs"
+      "com.moblets.BabyMobs"
     ]
   },
   "mixins": [

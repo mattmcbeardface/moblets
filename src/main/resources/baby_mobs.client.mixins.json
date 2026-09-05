@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "com.pagesofatlas.babymobs.mixin.client",
+  "package": "com.moblets.mixin.client",
   "compatibilityLevel": "JAVA_25",
   "client": [
     "LivingEntityRenderStateMixin",
