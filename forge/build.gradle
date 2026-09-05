@@ -1,0 +1,81 @@
+plugins {
+    id 'java'
+    id 'net.minecraftforge.gradle' version '[7.0.17,8)'
+}
+
+base {
+    archivesName = 'moblets-forge'
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(25)
+    withSourcesJar()
+}
+
+sourceSets {
+    main {
+        java.srcDir rootProject.file('common/src/main/java')
+        java.srcDir rootProject.file('common/src/client/java')
+        resources.srcDir rootProject.file('common/src/main/resources')
+    }
+}
+
+minecraft {
+    runs {
+        configureEach {
+            workingDir = layout.projectDirectory.dir('run')
+            systemProperty 'eventbus.api.strictRuntimeChecks', 'true'
+        }
+
+        register('client')
+
+        register('server') {
+            args '--nogui'
+        }
+    }
+}
+
+repositories {
+    minecraft.mavenizer(it)
+    maven fg.forgeMaven
+    maven fg.minecraftLibsMaven
+    mavenCentral()
+}
+
+dependencies {
+    implementation minecraft.dependency(
+            "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+    )
+
+    annotationProcessor 'net.minecraftforge:eventbus-validator:7.0.5'
+}
+
+def modVersion = providers.gradleProperty("version").get()
+
+processResources {
+    inputs.property "version", modVersion
+    inputs.property "minecraft_version", project.minecraft_version
+    inputs.property "forge_version", project.forge_version
+
+    filesMatching("META-INF/mods.toml") {
+        expand(
+            version: modVersion,
+            minecraft_version: project.minecraft_version,
+            forge_version: project.forge_version
+        )
+    }
+}
+
+tasks.named('jar', Jar) {
+    manifest {
+        attributes(
+            'MixinConfigs':
+                'baby_mobs.mixins.json,baby_mobs.client.mixins.json'
+        )
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.release = 25
+    options.encoding = 'UTF-8'
+}

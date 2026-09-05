@@ -1,0 +1,24 @@
+modLoader="javafml"
+loaderVersion="[65,)"
+license="All Rights Reserved"
+
+[[mods]]
+modId="baby_mobs"
+version="${version}"
+displayName="Moblets"
+logoFile="assets/baby_mobs/icon.png"
+description='''Adds custom baby variants of Minecraft mobs with unique spawning, proportions, and behavior.'''
+
+[[dependencies.baby_mobs]]
+modId="forge"
+mandatory=true
+versionRange="[${forge_version},)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.baby_mobs]]
+modId="minecraft"
+mandatory=true
+versionRange="[${minecraft_version}]"
+ordering="NONE"
+side="BOTH"
