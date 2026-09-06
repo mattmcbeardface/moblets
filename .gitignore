@@ -4,3 +4,6 @@ out/
 .idea/
 *.iml
 /forge/run/
+
+/fabric/run/
+/neoforge/run/
