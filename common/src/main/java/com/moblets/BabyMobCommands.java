@@ -8,7 +8,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 
 public final class BabyMobCommands {
@@ -24,14 +24,14 @@ public final class BabyMobCommands {
                                                 .then(Commands.literal("baby")
                                                         .executes(context -> summon(
                                                                 context.getSource(),
-                                                                EntityTypes.SKELETON,
+                                                                EntityType.SKELETON,
                                                                 true,
                                                                 BabySkeletons::applyBaby
                                                         )))
                                                 .then(Commands.literal("adult")
                                                         .executes(context -> summon(
                                                                 context.getSource(),
-                                                                EntityTypes.SKELETON,
+                                                                EntityType.SKELETON,
                                                                 false,
                                                                 BabySkeletons::applyBaby
                                                         )))
@@ -40,14 +40,14 @@ public final class BabyMobCommands {
                                                 .then(Commands.literal("baby")
                                                         .executes(context -> summon(
                                                                 context.getSource(),
-                                                                EntityTypes.CREEPER,
+                                                                EntityType.CREEPER,
                                                                 true,
                                                                 BabyCreepers::applyBaby
                                                         )))
                                                 .then(Commands.literal("adult")
                                                         .executes(context -> summon(
                                                                 context.getSource(),
-                                                                EntityTypes.CREEPER,
+                                                                EntityType.CREEPER,
                                                                 false,
                                                                 BabyCreepers::applyBaby
                                                         )))
@@ -56,14 +56,14 @@ public final class BabyMobCommands {
                                                 .then(Commands.literal("baby")
                                                         .executes(context -> summon(
                                                                 context.getSource(),
-                                                                EntityTypes.ENDERMAN,
+                                                                EntityType.ENDERMAN,
                                                                 true,
                                                                 BabyEndermen::applyBaby
                                                         )))
                                                 .then(Commands.literal("adult")
                                                         .executes(context -> summon(
                                                                 context.getSource(),
-                                                                EntityTypes.ENDERMAN,
+                                                                EntityType.ENDERMAN,
                                                                 false,
                                                                 BabyEndermen::applyBaby
                                                         )))
@@ -72,14 +72,14 @@ public final class BabyMobCommands {
                                                 .then(Commands.literal("baby")
                                                         .executes(context -> summon(
                                                                 context.getSource(),
-                                                                EntityTypes.WITCH,
+                                                                EntityType.WITCH,
                                                                 true,
                                                                 BabyWitches::applyBaby
                                                         )))
                                                 .then(Commands.literal("adult")
                                                         .executes(context -> summon(
                                                                 context.getSource(),
-                                                                EntityTypes.WITCH,
+                                                                EntityType.WITCH,
                                                                 false,
                                                                 BabyWitches::applyBaby
                                                         )))
@@ -88,14 +88,14 @@ public final class BabyMobCommands {
                                                 .then(Commands.literal("baby")
                                                         .executes(context -> summon(
                                                                 context.getSource(),
-                                                                EntityTypes.STRAY,
+                                                                EntityType.STRAY,
                                                                 true,
                                                                 BabySkeletons::applyBaby
                                                         )))
                                                 .then(Commands.literal("adult")
                                                         .executes(context -> summon(
                                                                 context.getSource(),
-                                                                EntityTypes.STRAY,
+                                                                EntityType.STRAY,
                                                                 false,
                                                                 BabySkeletons::applyBaby
                                                         )))
@@ -104,14 +104,14 @@ public final class BabyMobCommands {
                                                 .then(Commands.literal("baby")
                                                         .executes(context -> summon(
                                                                 context.getSource(),
-                                                                EntityTypes.BOGGED,
+                                                                EntityType.BOGGED,
                                                                 true,
                                                                 BabySkeletons::applyBaby
                                                         )))
                                                 .then(Commands.literal("adult")
                                                         .executes(context -> summon(
                                                                 context.getSource(),
-                                                                EntityTypes.BOGGED,
+                                                                EntityType.BOGGED,
                                                                 false,
                                                                 BabySkeletons::applyBaby
                                                         )))
@@ -120,14 +120,14 @@ public final class BabyMobCommands {
                                                 .then(Commands.literal("baby")
                                                         .executes(context -> summon(
                                                                 context.getSource(),
-                                                                EntityTypes.PARCHED,
+                                                                EntityType.PARCHED,
                                                                 true,
                                                                 BabySkeletons::applyBaby
                                                         )))
                                                 .then(Commands.literal("adult")
                                                         .executes(context -> summon(
                                                                 context.getSource(),
-                                                                EntityTypes.PARCHED,
+                                                                EntityType.PARCHED,
                                                                 false,
                                                                 BabySkeletons::applyBaby
                                                         )))
@@ -136,14 +136,14 @@ public final class BabyMobCommands {
                                                 .then(Commands.literal("baby")
                                                         .executes(context -> summon(
                                                                 context.getSource(),
-                                                                EntityTypes.WITHER_SKELETON,
+                                                                EntityType.WITHER_SKELETON,
                                                                 true,
                                                                 BabySkeletons::applyBaby
                                                         )))
                                                 .then(Commands.literal("adult")
                                                         .executes(context -> summon(
                                                                 context.getSource(),
-                                                                EntityTypes.WITHER_SKELETON,
+                                                                EntityType.WITHER_SKELETON,
                                                                 false,
                                                                 BabySkeletons::applyBaby
                                                         )))
@@ -152,14 +152,14 @@ public final class BabyMobCommands {
                                                 .then(Commands.literal("baby")
                                                         .executes(context -> summon(
                                                                 context.getSource(),
-                                                                EntityTypes.PILLAGER,
+                                                                EntityType.PILLAGER,
                                                                 true,
                                                                 BabyPillagers::applyBaby
                                                         )))
                                                 .then(Commands.literal("adult")
                                                         .executes(context -> summon(
                                                                 context.getSource(),
-                                                                EntityTypes.PILLAGER,
+                                                                EntityType.PILLAGER,
                                                                 false,
                                                                 BabyPillagers::applyBaby
                                                         )))
@@ -168,14 +168,14 @@ public final class BabyMobCommands {
                                                 .then(Commands.literal("baby")
                                                         .executes(context -> summon(
                                                                 context.getSource(),
-                                                                EntityTypes.SNOW_GOLEM,
+                                                                EntityType.SNOW_GOLEM,
                                                                 true,
                                                                 BabySnowGolems::applyBaby
                                                         )))
                                                 .then(Commands.literal("adult")
                                                         .executes(context -> summon(
                                                                 context.getSource(),
-                                                                EntityTypes.SNOW_GOLEM,
+                                                                EntityType.SNOW_GOLEM,
                                                                 false,
                                                                 BabySnowGolems::applyBaby
                                                         )))
@@ -184,14 +184,14 @@ public final class BabyMobCommands {
                                                 .then(Commands.literal("baby")
                                                         .executes(context -> summon(
                                                                 context.getSource(),
-                                                                EntityTypes.IRON_GOLEM,
+                                                                EntityType.IRON_GOLEM,
                                                                 true,
                                                                 BabyIronGolems::applyBaby
                                                         )))
                                                 .then(Commands.literal("adult")
                                                         .executes(context -> summon(
                                                                 context.getSource(),
-                                                                EntityTypes.IRON_GOLEM,
+                                                                EntityType.IRON_GOLEM,
                                                                 false,
                                                                 BabyIronGolems::applyBaby
                                                         )))
@@ -200,14 +200,14 @@ public final class BabyMobCommands {
                                                 .then(Commands.literal("baby")
                                                         .executes(context -> summon(
                                                                 context.getSource(),
-                                                                EntityTypes.WANDERING_TRADER,
+                                                                EntityType.WANDERING_TRADER,
                                                                 true,
                                                                 BabyWanderingTraders::applyBaby
                                                         )))
                                                 .then(Commands.literal("adult")
                                                         .executes(context -> summon(
                                                                 context.getSource(),
-                                                                EntityTypes.WANDERING_TRADER,
+                                                                EntityType.WANDERING_TRADER,
                                                                 false,
                                                                 BabyWanderingTraders::applyBaby
                                                         )))
@@ -216,14 +216,14 @@ public final class BabyMobCommands {
                                                 .then(Commands.literal("baby")
                                                         .executes(context -> summon(
                                                                 context.getSource(),
-                                                                EntityTypes.CAMEL_HUSK,
+                                                                EntityType.CAMEL_HUSK,
                                                                 true,
                                                                 BabyCamelHusks::applyBaby
                                                         )))
                                                 .then(Commands.literal("adult")
                                                         .executes(context -> summon(
                                                                 context.getSource(),
-                                                                EntityTypes.CAMEL_HUSK,
+                                                                EntityType.CAMEL_HUSK,
                                                                 false,
                                                                 BabyCamelHusks::applyBaby
                                                         )))

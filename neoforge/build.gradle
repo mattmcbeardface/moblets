@@ -23,6 +23,17 @@ sourceSets {
 neoForge {
     version = project.neoforge_version
 
+    runs {
+        client {
+            client()
+        }
+
+        server {
+            server()
+            programArgument '--nogui'
+        }
+    }
+
     mods {
         "baby_mobs" {
             sourceSet(sourceSets.main)

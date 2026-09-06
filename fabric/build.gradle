@@ -38,9 +38,15 @@ def modVersion = providers.gradleProperty("version").get()
 
 processResources {
     inputs.property "version", modVersion
+    inputs.property "minecraft_version", project.minecraft_version
+    inputs.property "fabric_api_version", project.fabric_api_version
 
     filesMatching("fabric.mod.json") {
-        expand "version": modVersion
+        expand(
+            version: modVersion,
+            minecraft_version: project.minecraft_version,
+            fabric_api_version: project.fabric_api_version
+        )
     }
 }
 

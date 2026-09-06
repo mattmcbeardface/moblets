@@ -17,7 +17,10 @@ public abstract class ServerExplosionMixin {
     protected abstract @Nullable Entity babyMobs$getSource();
 
     @ModifyArg(
-            method = "hurtEntities",
+            method = {
+                    "hurtEntities()V",
+                    "hurtEntities(Ljava/util/List;)V"
+            },
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/world/entity/Entity;hurtServer(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/damagesource/DamageSource;F)Z"

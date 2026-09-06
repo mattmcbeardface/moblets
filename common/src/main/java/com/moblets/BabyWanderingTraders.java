@@ -10,7 +10,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntitySpawnReason;
-import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -222,7 +222,7 @@ public final class BabyWanderingTraders {
 
         for (BlockPos candidate : candidates) {
             WanderingTrader baby =
-                    EntityTypes.WANDERING_TRADER.spawn(
+                    EntityType.WANDERING_TRADER.spawn(
                             level,
                             candidate,
                             EntitySpawnReason.EVENT
@@ -291,7 +291,7 @@ public final class BabyWanderingTraders {
             }
 
             TraderLlama llama =
-                    EntityTypes.TRADER_LLAMA.spawn(
+                    EntityType.TRADER_LLAMA.spawn(
                             level,
                             candidate,
                             EntitySpawnReason.EVENT

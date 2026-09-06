@@ -71,7 +71,7 @@ processResources {
         )
     }
 
-    // Forge 65.1.3 bundles Mixin 0.8.7, whose config parser
+    // Forge 64.1.3 bundles Mixin 0.8.7, whose config parser
     // does not recognise JAVA_25. Moblets does not require
     // Java-25-specific Mixin language features, so rewrite
     // the Forge copies only.

@@ -10,7 +10,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntitySpawnReason;
-import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -165,7 +165,7 @@ public final class BabySnowGolems {
         };
 
         for (BlockPos candidate : candidates) {
-            SnowGolem baby = EntityTypes.SNOW_GOLEM.spawn(
+            SnowGolem baby = EntityType.SNOW_GOLEM.spawn(
                     level,
                     candidate,
                     EntitySpawnReason.EVENT

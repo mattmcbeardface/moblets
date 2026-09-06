@@ -8,7 +8,7 @@ import java.util.Set;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -149,7 +149,7 @@ public final class BabyCamelHusks {
              * Moblets already has a complete custom baby implementation.
              */
             if (passenger instanceof AbstractSkeleton skeleton
-                    && passenger.getType() == EntityTypes.PARCHED) {
+                    && passenger.getType() == EntityType.PARCHED) {
 
                 if (!BabySkeletons.isBaby(skeleton)) {
                     BabySkeletons.applyBaby(skeleton);

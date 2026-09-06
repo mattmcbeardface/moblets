@@ -5,7 +5,7 @@ import net.minecraft.client.animation.AnimationDefinition;
 import net.minecraft.client.model.animal.camel.CamelModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.entity.state.CamelRenderState;
-import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.EntityType;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -79,7 +79,7 @@ public abstract class CamelModelMixin {
          * Do absolutely nothing unless this render state belongs to
          * a Camel Husk.
          */
-        if (state.entityType != EntityTypes.CAMEL_HUSK) {
+        if (state.entityType != EntityType.CAMEL_HUSK) {
             return;
         }
 
