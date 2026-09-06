@@ -2,7 +2,23 @@
 
 Moblets adds custom baby variants of Minecraft mobs while preserving the identity and behavior of the original mobs.
 
-These are more than simply scaled-down models. Baby variants can have their own proportions, movement speeds, damage, accuracy, spawning rules, and encounter behavior.
+These are more than simply scaled-down models. Baby variants can have their own proportions, movement speeds, damage, accuracy, spawning rules, sounds, and encounter behavior.
+
+## Supported Versions
+
+Minecraft 26.2
+- Fabric
+- NeoForge
+- Forge
+- Java 25
+
+Minecraft 26.1.2
+- Fabric
+- NeoForge
+- Forge
+- Java 25
+
+Download the JAR that matches both your Minecraft version and mod loader.
 
 ## Supported Mobs
 
@@ -22,31 +38,29 @@ The following mobs have an 8% chance for a naturally spawned mob to become a bab
 
 Baby Camel Husk encounters also convert their Husk and Parched passengers into baby variants.
 
-### Special Encounters
+## Special Encounters
 
-Some mobs use rules that fit their normal Minecraft spawning behavior instead of the standard 8% chance.
-
-#### Pillager Outposts
+### Pillager Outposts
 
 Pillager Outposts contain one or two baby Pillagers.
 
 Raid and patrol Pillagers are left unchanged.
 
-#### Snow Golems
+### Snow Golems
 
 Adult Snow Golems maintain a baby Snow Golem companion nearby.
 
-#### Iron Golems
+### Iron Golems
 
 Village-created adult Iron Golems can maintain a baby Iron Golem companion nearby.
 
 Player-created Iron Golems are left unchanged.
 
-#### Wandering Traders
+### Wandering Traders
 
 Normal Wandering Trader caravans receive a baby Wandering Trader companion with two baby Trader Llamas.
 
-The baby trader remains able to trade and follows the caravan's normal despawn timing.
+The baby trader remains able to trade, follows the caravan's normal despawn timing, and uses a higher-pitched version of the vanilla Wandering Trader voice.
 
 ## Baby Behavior
 
@@ -54,13 +68,14 @@ Baby mobs retain the core behavior of their adult counterparts, but individual v
 
 Examples include:
 
-- smaller physical size with custom juvenile proportions
-- increased movement speed
-- reduced melee or projectile damage where appropriate
-- reduced ranged accuracy
-- smaller Creeper explosions
-- weaker Witch potion attacks
-- custom encounter and companion spawning
+- Smaller physical size with custom juvenile proportions
+- Increased movement speed
+- Reduced melee or projectile damage where appropriate
+- Reduced ranged accuracy
+- Smaller Creeper explosions
+- Weaker Witch potion attacks
+- Custom encounter and companion spawning
+- Baby-specific sound adjustments where appropriate
 
 Existing vanilla baby mobs such as Zombie Villagers, Drowned, and Husks are not replaced by Moblets.
 
@@ -89,28 +104,70 @@ Supported command names:
 
 ## Requirements
 
-- Minecraft 26.2
+### Minecraft 26.2
+
+Fabric:
 - Fabric Loader 0.19.3 or newer
 - Fabric API 0.158.0+26.2 or newer
+
+NeoForge:
+- NeoForge 26.2.0.75 or newer
+
+Forge:
+- Forge 65.1.3 or newer
+
+Java:
 - Java 25
 
-For multiplayer, install Moblets and Fabric API on the server and participating clients.
+### Minecraft 26.1.2
+
+Fabric:
+- Fabric Loader 0.19.3 or newer
+- Fabric API 0.154.2+26.1.2 or newer
+
+NeoForge:
+- NeoForge 26.1.2.100 or newer
+
+Forge:
+- Forge 64.1.3 or newer
+
+Java:
+- Java 25
+
+For multiplayer, install Moblets on the server and participating clients.
+
+Fabric installations also require Fabric API.
 
 ## Resource Packs
 
 Moblets uses Minecraft's existing entity types rather than replacing mobs with entirely new entity registrations.
 
-Its custom baby rendering is designed to remain compatible with resource packs and custom entity textures/models as much as possible.
+Its custom baby rendering is designed to remain compatible with resource packs and custom entity textures and models as much as possible.
 
 ## Development
 
-Build with:
+Moblets uses a shared multi-loader project structure:
+
+    common/
+    fabric/
+    neoforge/
+    forge/
+
+Most gameplay and rendering logic is shared in common, with loader-specific integration handled by the individual loader modules.
+
+Build all supported loaders with:
 
     ./gradlew clean build
 
-The release JAR is produced in:
+Release JARs are produced in:
 
-    build/libs/
+    fabric/build/libs/
+    neoforge/build/libs/
+    forge/build/libs/
+
+The main branch targets Minecraft 26.2.
+
+The mc-26.1.2 branch targets Minecraft 26.1.2.
 
 ## Disclaimer
 
