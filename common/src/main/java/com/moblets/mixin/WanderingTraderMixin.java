@@ -3,6 +3,7 @@ package com.moblets.mixin;
 import com.moblets.BabyTraderDebtFollowGoal;
 import com.moblets.BabyTraderPaymentGoal;
 import com.moblets.BabyTraderSalesGoal;
+import com.moblets.BabyWanderingTraders;
 
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.npc.villager.AbstractVillager;
@@ -23,6 +24,20 @@ public abstract class WanderingTraderMixin
             Level level
     ) {
         super(entityType, level);
+    }
+
+    @Override
+    public float getVoicePitch() {
+        float vanillaPitch = super.getVoicePitch();
+
+        WanderingTrader trader =
+                (WanderingTrader) (Object) this;
+
+        if (BabyWanderingTraders.isBaby(trader)) {
+            return vanillaPitch * 1.50F;
+        }
+
+        return vanillaPitch;
     }
 
     @Inject(
