@@ -1,5 +1,8 @@
 package com.moblets;
 
+import com.moblets.config.MobletsConfig;
+import com.moblets.registry.EncounterRegistry;
+
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.entity.Entity;
 import java.util.ArrayList;
@@ -104,6 +107,12 @@ public final class BabyPillagers {
         }
 
         PENDING.removeAll(currentWorld);
+
+        if (!MobletsConfig.encounterEnabled(
+                EncounterRegistry.PILLAGER_OUTPOST
+        )) {
+            return;
+        }
 
         for (Pillager pillager : currentWorld) {
             if (pillager.isRemoved()) {

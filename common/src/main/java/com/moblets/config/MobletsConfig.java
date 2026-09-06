@@ -15,6 +15,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.moblets.Moblets;
 import com.moblets.registry.BalanceStat;
+import com.moblets.registry.EncounterDefinition;
+import com.moblets.registry.EncounterRegistry;
 import com.moblets.registry.MobletDefinition;
 import com.moblets.registry.MobletRegistry;
 
@@ -114,6 +116,25 @@ public final class MobletsConfig {
                         stat,
                         multiplier
                 );
+    }
+
+    public static synchronized boolean encounterEnabled(
+            EncounterDefinition definition
+    ) {
+        return data.encounters.getOrDefault(
+                definition.id(),
+                definition.defaultEnabled()
+        );
+    }
+
+    public static synchronized void setEncounterEnabled(
+            EncounterDefinition definition,
+            boolean enabled
+    ) {
+        data.encounters.put(
+                definition.id(),
+                enabled
+        );
     }
 
     public static synchronized void resetMoblet(
@@ -237,6 +258,11 @@ public final class MobletsConfig {
             changed = true;
         }
 
+        if (data.encounters == null) {
+            data.encounters = new LinkedHashMap<>();
+            changed = true;
+        }
+
         for (MobletDefinition definition
                 : MobletRegistry.all()) {
 
@@ -259,6 +285,21 @@ public final class MobletsConfig {
             }
 
             if (entry.normalize(definition)) {
+                changed = true;
+            }
+        }
+
+        for (EncounterDefinition definition
+                : EncounterRegistry.all()) {
+
+            if (!data.encounters.containsKey(
+                    definition.id()
+            )) {
+                data.encounters.put(
+                        definition.id(),
+                        definition.defaultEnabled()
+                );
+
                 changed = true;
             }
         }
@@ -317,6 +358,9 @@ public final class MobletsConfig {
 
     private static final class ConfigData {
         private Map<String, MobletConfigEntry> mobs =
+                new LinkedHashMap<>();
+
+        private Map<String, Boolean> encounters =
                 new LinkedHashMap<>();
     }
 }

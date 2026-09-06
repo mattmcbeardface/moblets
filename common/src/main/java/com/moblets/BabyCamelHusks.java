@@ -1,5 +1,8 @@
 package com.moblets;
 
+import com.moblets.config.MobletsConfig;
+import com.moblets.registry.EncounterRegistry;
+
 import net.minecraft.server.MinecraftServer;
 import java.util.Collections;
 import java.util.IdentityHashMap;
@@ -92,7 +95,11 @@ public final class BabyCamelHusks {
         /*
          * In case passengers are already present when this method runs.
          */
-        applyBabyToPassengers(camelHusk);
+        if (MobletsConfig.encounterEnabled(
+                EncounterRegistry.CAMEL_HUSK_RIDERS
+        )) {
+            applyBabyToPassengers(camelHusk);
+        }
     }
 
     public static boolean isBaby(CamelHusk camelHusk) {
@@ -122,7 +129,11 @@ public final class BabyCamelHusks {
                 continue;
             }
 
-            applyBabyToPassengers(camelHusk);
+            if (MobletsConfig.encounterEnabled(
+                    EncounterRegistry.CAMEL_HUSK_RIDERS
+            )) {
+                applyBabyToPassengers(camelHusk);
+            }
         }
     }
 
