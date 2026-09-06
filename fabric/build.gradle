@@ -59,3 +59,7 @@ java {
     sourceCompatibility = JavaVersion.VERSION_25
     targetCompatibility = JavaVersion.VERSION_25
 }
+
+tasks.withType(AbstractArchiveTask).configureEach {
+    archiveVersion = "${project.version}+mc${project.minecraft_version}"
+}
