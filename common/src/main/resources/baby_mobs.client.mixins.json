@@ -1,0 +1,31 @@
+{
+  "required": true,
+  "package": "com.moblets.mixin.client",
+  "compatibilityLevel": "JAVA_25",
+  "client": [
+    "LivingEntityRenderStateMixin",
+    "CreeperRendererMixin",
+    "LivingEntityRendererInvoker",
+    "EndermanRendererMixin",
+    "CreeperModelMixin",
+    "EndermanModelMixin",
+    "AbstractSkeletonRendererMixin",
+    "SkeletonModelMixin",
+    "WitchRendererMixin",
+    "WitchModelMixin",
+    "IllagerRendererMixin",
+    "IllagerModelMixin",
+    "SnowGolemRendererMixin",
+    "SnowGolemModelMixin",
+    "IronGolemRendererMixin",
+    "IronGolemModelMixin",
+    "WanderingTraderRendererMixin",
+    "VillagerModelMixin",
+    "TraderLlamaLeashRendererMixin",
+    "CamelHuskRendererMixin",
+    "CamelModelMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

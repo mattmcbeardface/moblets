@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "baby_mobs",
+  "version": "${version}",
+  "name": "Moblets",
+  "description": "Adds custom baby variants of Minecraft mobs with unique spawning, proportions, and behavior.",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.moblets.BabyMobs"
+    ]
+  },
+  "mixins": [
+    "baby_mobs.mixins.json",
+    {
+      "config": "baby_mobs.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=0.19.3",
+    "minecraft": "=26.2",
+    "java": ">=25",
+    "fabric-api": ">=0.158.0+26.2"
+  },
+  "icon": "assets/baby_mobs/icon.png"
+}
