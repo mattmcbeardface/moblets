@@ -1,5 +1,6 @@
 package com.moblets;
 
+import com.moblets.config.MobletsConfig;
 import com.moblets.registry.MobletDefinition;
 import com.moblets.registry.MobletRegistry;
 
@@ -23,7 +24,7 @@ public final class BabyMobSpawns {
             return;
         }
 
-        if (roll(mob, definition.defaultSpawnChance())) {
+        if (roll(mob, MobletsConfig.spawnChance(definition))) {
             definition.applyBaby(mob);
         }
     }
