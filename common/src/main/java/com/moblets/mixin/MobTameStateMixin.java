@@ -436,6 +436,7 @@ public abstract class MobTameStateMixin
         if (hand == InteractionHand.MAIN_HAND
                 && mob instanceof AbstractSkeleton skeleton
                 && BabySkeletons.isBaby(skeleton)
+                && BabySkeletons.isRangedFamily(skeleton)
                 && player.getItemInHand(hand).getItem()
                         instanceof BowItem) {
 

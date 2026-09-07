@@ -11,11 +11,13 @@ import com.moblets.taming.MobletSkeletonSentryGoal;
 import com.moblets.taming.MobletOwnerHurtByTargetGoal;
 import com.moblets.taming.MobletOwnerHurtTargetGoal;
 import com.moblets.taming.MobletTamedTargetGuardGoal;
+import com.moblets.taming.MobletWitherGuardGoal;
 
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.skeleton.AbstractSkeleton;
+import net.minecraft.world.entity.monster.skeleton.WitherSkeleton;
 import net.minecraft.world.level.Level;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -102,6 +104,19 @@ public abstract class AbstractSkeletonGoalMixin extends Monster {
                 1,
                 new MobletSkeletonSentryGoal(skeleton)
         );
+
+        /*
+         * Wither Skeletons use Stay as a proactive melee guard
+         * rather than a ranged sentry.
+         */
+        if (skeleton instanceof WitherSkeleton witherSkeleton) {
+            this.goalSelector.addGoal(
+                    1,
+                    new MobletWitherGuardGoal(
+                            witherSkeleton
+                    )
+            );
+        }
 
         /*
          * Being bitten by a wolf overrides normal wild behavior.

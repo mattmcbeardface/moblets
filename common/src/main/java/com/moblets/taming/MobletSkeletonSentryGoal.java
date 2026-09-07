@@ -1,5 +1,7 @@
 package com.moblets.taming;
 
+import com.moblets.BabySkeletons;
+
 import java.util.List;
 
 import net.minecraft.core.BlockPos;
@@ -7,6 +9,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.monster.Enemy;
+import net.minecraft.world.entity.monster.skeleton.AbstractSkeleton;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 
@@ -64,7 +67,10 @@ public final class MobletSkeletonSentryGoal extends Goal {
         MobletTameState state =
                 (MobletTameState) this.mob;
 
-        return state.moblets$isTamed()
+        return this.mob instanceof AbstractSkeleton skeleton
+                && BabySkeletons.isBaby(skeleton)
+                && BabySkeletons.isRangedFamily(skeleton)
+                && state.moblets$isTamed()
                 && state.moblets$isOrderedToStay()
                 && state.moblets$getStayAnchor() != null;
     }

@@ -63,7 +63,8 @@ public abstract class AbstractSkeletonMixin {
         AbstractSkeleton skeleton =
                 (AbstractSkeleton) (Object) this;
 
-        if (!BabySkeletons.isBaby(skeleton)) {
+        if (!BabySkeletons.isBaby(skeleton)
+                || !BabySkeletons.isRangedFamily(skeleton)) {
             return vanillaInaccuracy;
         }
 
@@ -95,7 +96,8 @@ public abstract class AbstractSkeletonMixin {
                         firingWeapon
                 );
 
-        if (!BabySkeletons.isBaby(instance)) {
+        if (!BabySkeletons.isBaby(instance)
+                || !BabySkeletons.isRangedFamily(instance)) {
             return arrow;
         }
 

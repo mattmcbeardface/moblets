@@ -98,9 +98,7 @@ public final class BabySkeletons {
          *
          * Skeleton:                 30 HP
          * Stray / Bogged / Parched: 35 HP
-         *
-         * Wither Skeleton gets its own melee companion profile
-         * later and is deliberately excluded here.
+         * Wither Skeleton:          40 HP
          */
         double targetHealth;
 
@@ -110,6 +108,9 @@ public final class BabySkeletons {
                 || skeleton.getType() == EntityTypes.BOGGED
                 || skeleton.getType() == EntityTypes.PARCHED) {
             targetHealth = 35.0D;
+        } else if (skeleton.getType()
+                == EntityTypes.WITHER_SKELETON) {
+            targetHealth = 40.0D;
         } else {
             return;
         }
@@ -146,6 +147,15 @@ public final class BabySkeletons {
         skeleton.setHealth(
                 skeleton.getMaxHealth()
         );
+    }
+
+    public static boolean isRangedFamily(
+            AbstractSkeleton skeleton
+    ) {
+        return skeleton.getType() == EntityTypes.SKELETON
+                || skeleton.getType() == EntityTypes.STRAY
+                || skeleton.getType() == EntityTypes.BOGGED
+                || skeleton.getType() == EntityTypes.PARCHED;
     }
 
     public static boolean isBaby(AbstractSkeleton skeleton) {

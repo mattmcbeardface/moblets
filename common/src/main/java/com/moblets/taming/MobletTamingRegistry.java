@@ -71,6 +71,16 @@ public final class MobletTamingRegistry {
                         0.50F
                 )
         );
+
+        register(
+                EntityTypes.WITHER_SKELETON,
+                new MobletTamingRule(
+                        mob -> mob instanceof AbstractSkeleton skeleton
+                                && BabySkeletons.isBaby(skeleton),
+                        stack -> stack.is(Items.NETHER_WART),
+                        0.20F
+                )
+        );
     }
 
     private MobletTamingRegistry() {
