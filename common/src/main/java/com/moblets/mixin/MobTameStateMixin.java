@@ -489,15 +489,47 @@ public abstract class MobTameStateMixin
         }
 
         /*
-         * Owner-only empty-hand interaction toggles the
-         * companion between Follow and Stay.
+         * General owner command interaction.
+         *
+         * Any MAIN_HAND interaction that was not already handled
+         * above as:
+         *
+         *   - Bone healing / health inspection
+         *   - Armor equipping
+         *   - Sneak + empty-hand armor removal
+         *
+         * becomes the universal Follow / Stay command.
+         *
+         * Client ownership is not currently synchronized, so the
+         * client consumes the interaction for baby Skeletons and
+         * lets the server decide whether the player is actually
+         * the owner.
          */
         if (hand == InteractionHand.MAIN_HAND
-                && moblets$isOwnedBy(player)
-                && !player.isShiftKeyDown()
-                && player.getItemInHand(hand).isEmpty()) {
+                && mob instanceof AbstractSkeleton skeleton
+                && BabySkeletons.isBaby(skeleton)) {
 
-            if (!mob.level().isClientSide()) {
+            /*
+             * Client prediction:
+             *
+             * Prevent the held item's normal use behavior from
+             * also firing when the player clicks the Moblet.
+             */
+            if (mob.level().isClientSide()) {
+                cir.setReturnValue(
+                        InteractionResult.SUCCESS
+                );
+                return;
+            }
+
+            /*
+             * Server:
+             *
+             * Only the owner may issue Follow / Stay commands.
+             * Non-owners fall through so normal taming logic can
+             * still process wild Moblets.
+             */
+            if (moblets$isOwnedBy(player)) {
                 this.moblets$orderedToStay =
                         !this.moblets$orderedToStay;
 
@@ -518,12 +550,12 @@ public abstract class MobTameStateMixin
                                         : "Moblet is following."
                         )
                 );
-            }
 
-            cir.setReturnValue(
-                    InteractionResult.SUCCESS.withoutItem()
-            );
-            return;
+                cir.setReturnValue(
+                        InteractionResult.SUCCESS_SERVER
+                );
+                return;
+            }
         }
 
         InteractionResult result =
