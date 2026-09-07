@@ -1,5 +1,7 @@
 package com.moblets.taming;
 
+import com.moblets.BabySkeletons;
+
 import com.moblets.config.MobletsConfig;
 import com.moblets.registry.MobletDefinition;
 import com.moblets.registry.MobletRegistry;
@@ -8,6 +10,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.monster.skeleton.AbstractSkeleton;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -170,6 +173,18 @@ public final class MobletTaming {
             state.moblets$setOwnerUuid(
                     result.player.getUUID()
             );
+
+            /*
+             * Apply the permanent companion stat package
+             * at the moment ownership is established.
+             */
+            if (mob instanceof AbstractSkeleton skeleton
+                    && BabySkeletons.isBaby(skeleton)) {
+
+                BabySkeletons.applyTamedStats(
+                        skeleton
+                );
+            }
 
             state.moblets$setCuriousPlayerUuid(null);
         }

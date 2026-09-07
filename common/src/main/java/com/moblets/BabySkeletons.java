@@ -19,6 +19,9 @@ public final class BabySkeletons {
     private static final Identifier BABY_WITHER_DAMAGE_ID =
             Identifier.fromNamespaceAndPath(Moblets.MOD_ID, "baby_wither_skeleton_damage");
 
+    private static final Identifier TAMED_HEALTH_ID =
+            Identifier.fromNamespaceAndPath(Moblets.MOD_ID, "tamed_skeleton_health");
+
     private static final Identifier WOLF_LESSON_ID =
             Identifier.fromNamespaceAndPath(Moblets.MOD_ID, "baby_skeleton_wolf_lesson");
 
@@ -40,6 +43,17 @@ public final class BabySkeletons {
             new AttributeModifier(
                     BABY_WITHER_DAMAGE_ID,
                     -0.50D,
+                    AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
+            );
+
+    /*
+     * Vanilla Skeleton max health is 20 HP.
+     * +25% gives a tamed Skeleton Moblet 25 HP.
+     */
+    private static final AttributeModifier TAMED_HEALTH =
+            new AttributeModifier(
+                    TAMED_HEALTH_ID,
+                    0.25D,
                     AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
             );
 
@@ -77,6 +91,33 @@ public final class BabySkeletons {
             if (damage != null) {
                 damage.addOrReplacePermanentModifier(BABY_WITHER_DAMAGE);
             }
+        }
+    }
+
+    public static void applyTamedStats(
+            AbstractSkeleton skeleton
+    ) {
+        if (!isBaby(skeleton)) {
+            return;
+        }
+
+        AttributeInstance health =
+                skeleton.getAttribute(
+                        Attributes.MAX_HEALTH
+                );
+
+        if (health != null) {
+            health.addOrReplacePermanentModifier(
+                    TAMED_HEALTH
+            );
+
+            /*
+             * Successful taming starts the companion at
+             * its new full health.
+             */
+            skeleton.setHealth(
+                    skeleton.getMaxHealth()
+            );
         }
     }
 
