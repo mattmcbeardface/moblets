@@ -7,6 +7,7 @@ import com.moblets.BabySkeletonWolfFleeGoal;
 import com.moblets.taming.MobletCuriosityGoal;
 import com.moblets.taming.MobletFollowOwnerGoal;
 import com.moblets.taming.MobletStayGoal;
+import com.moblets.taming.MobletSkeletonSentryGoal;
 import com.moblets.taming.MobletOwnerHurtByTargetGoal;
 import com.moblets.taming.MobletOwnerHurtTargetGoal;
 import com.moblets.taming.MobletTamedTargetGuardGoal;
@@ -88,6 +89,18 @@ public abstract class AbstractSkeletonGoalMixin extends Monster {
         this.goalSelector.addGoal(
                 0,
                 new MobletStayGoal(skeleton)
+        );
+
+        /*
+         * Stay-mode behavior for Skeleton Moblets.
+         *
+         * This goal performs proactive hostile detection.
+         * Actual ranged combat is still handled by the
+         * Skeleton's normal bow attack goal.
+         */
+        this.goalSelector.addGoal(
+                1,
+                new MobletSkeletonSentryGoal(skeleton)
         );
 
         /*

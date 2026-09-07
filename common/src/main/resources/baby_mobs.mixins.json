@@ -19,7 +19,8 @@
     "EndermanLeaveBlockGoalMixin",
     "WanderingTraderMixin",
     "ItemEntityMixin",
-    "MobTameStateMixin"
+    "MobTameStateMixin",
+    "RangedBowAttackGoalMixin"
   ],
   "injectors": {
     "defaultRequire": 1
