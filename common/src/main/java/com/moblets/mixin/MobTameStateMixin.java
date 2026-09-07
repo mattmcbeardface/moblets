@@ -17,6 +17,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.skeleton.AbstractSkeleton;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
@@ -205,6 +206,116 @@ public abstract class MobTameStateMixin
     ) {
         Mob mob =
                 (Mob) (Object) this;
+
+        /*
+         * Owner healing / health inspection for Skeleton Moblets.
+         *
+         * Normal right-click with a bone:
+         *   heals 4 HP and consumes one bone in Survival.
+         *
+         * Sneak + right-click with a bone:
+         *   reports health without healing or consuming.
+         */
+        if (hand == InteractionHand.MAIN_HAND
+                && mob instanceof AbstractSkeleton skeleton
+                && BabySkeletons.isBaby(skeleton)
+                && player.getItemInHand(hand).is(Items.BONE)) {
+
+            /*
+             * Client recognizes the interaction immediately so
+             * the held item cannot fall through into some other
+             * use behavior. Ownership remains server-authoritative.
+             */
+            if (mob.level().isClientSide()) {
+                cir.setReturnValue(
+                        InteractionResult.SUCCESS
+                );
+                return;
+            }
+
+            if (!moblets$isOwnedBy(player)) {
+                cir.setReturnValue(
+                        InteractionResult.CONSUME
+                );
+                return;
+            }
+
+            float health =
+                    mob.getHealth();
+
+            float maxHealth =
+                    mob.getMaxHealth();
+
+            /*
+             * Sneaking with a bone is the non-destructive health
+             * inspection action.
+             */
+            if (player.isShiftKeyDown()) {
+                player.sendOverlayMessage(
+                        Component.literal(
+                                "Moblet health: "
+                                        + Math.round(health)
+                                        + " / "
+                                        + Math.round(maxHealth)
+                                        + " HP"
+                        )
+                );
+
+                cir.setReturnValue(
+                        InteractionResult.SUCCESS_SERVER
+                );
+                return;
+            }
+
+            /*
+             * Do not waste a bone when already at full health.
+             */
+            if (health >= maxHealth) {
+                player.sendOverlayMessage(
+                        Component.literal(
+                                "Moblet health: "
+                                        + Math.round(health)
+                                        + " / "
+                                        + Math.round(maxHealth)
+                                        + " HP"
+                        )
+                );
+
+                cir.setReturnValue(
+                        InteractionResult.SUCCESS_SERVER
+                );
+                return;
+            }
+
+            float before =
+                    health;
+
+            mob.heal(4.0F);
+
+            float after =
+                    mob.getHealth();
+
+            if (!player.getAbilities().instabuild) {
+                player.getItemInHand(hand).shrink(1);
+            }
+
+            player.sendOverlayMessage(
+                    Component.literal(
+                            "Moblet healed: "
+                                    + Math.round(before)
+                                    + " -> "
+                                    + Math.round(after)
+                                    + " / "
+                                    + Math.round(maxHealth)
+                                    + " HP"
+                    )
+            );
+
+            cir.setReturnValue(
+                    InteractionResult.SUCCESS_SERVER
+            );
+            return;
+        }
 
         /*
          * Skeleton Moblet armor interaction.
@@ -444,6 +555,35 @@ public abstract class MobTameStateMixin
     ) {
         if (this.moblets$isTamed()) {
             cir.setReturnValue(false);
+        }
+    }
+
+    /*
+     * Very slow passive recovery for tamed Moblets.
+     *
+     * One HP every 30 seconds while out of combat.
+     * This is intentionally weak enough that active combat can
+     * still be dangerous; owner-provided healing remains useful.
+     */
+    @Inject(
+            method = "tick",
+            at = @At("TAIL")
+    )
+    private void moblets$passiveTamedRegeneration(
+            CallbackInfo ci
+    ) {
+        Mob mob =
+                (Mob) (Object) this;
+
+        if (mob.level().isClientSide()
+                || !this.moblets$isTamed()
+                || mob.getTarget() != null
+                || mob.getHealth() >= mob.getMaxHealth()) {
+            return;
+        }
+
+        if (mob.tickCount % 600 == 0) {
+            mob.heal(1.0F);
         }
     }
 
