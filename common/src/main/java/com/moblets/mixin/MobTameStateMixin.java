@@ -53,6 +53,15 @@ public abstract class MobTameStateMixin
             "MobletsStayAnchorZ";
 
     @Unique
+    private static final double MOBLETS_STAY_COMBAT_RADIUS =
+            3.0D;
+
+    @Unique
+    private static final double MOBLETS_STAY_COMBAT_RADIUS_SQR =
+            MOBLETS_STAY_COMBAT_RADIUS
+                    * MOBLETS_STAY_COMBAT_RADIUS;
+
+    @Unique
     private UUID moblets$ownerUuid;
 
     @Unique
@@ -259,6 +268,66 @@ public abstract class MobTameStateMixin
         if (moblets$isTamed()
                 && target instanceof Player) {
             ci.cancel();
+        }
+    }
+
+    @Inject(
+            method = "tick",
+            at = @At("TAIL")
+    )
+    private void moblets$enforceStayCombatLeash(
+            CallbackInfo ci
+    ) {
+        Mob mob =
+                (Mob) (Object) this;
+
+        if (!this.moblets$isTamed()
+                || !this.moblets$orderedToStay
+                || this.moblets$stayAnchor == null) {
+            return;
+        }
+
+        LivingEntity target =
+                mob.getTarget();
+
+        if (target == null
+                || !target.isAlive()
+                || target instanceof Player) {
+            return;
+        }
+
+        double anchorX =
+                this.moblets$stayAnchor.getX() + 0.5D;
+
+        double anchorY =
+                this.moblets$stayAnchor.getY();
+
+        double anchorZ =
+                this.moblets$stayAnchor.getZ() + 0.5D;
+
+        double distanceSqr =
+                mob.distanceToSqr(
+                        anchorX,
+                        anchorY,
+                        anchorZ
+                );
+
+        /*
+         * During combat, vanilla Skeleton bow AI may strafe
+         * and reposition normally inside the sentry radius.
+         *
+         * Once it crosses the three-block leash, redirect it
+         * toward its assigned post instead of letting it chase.
+         */
+        if (distanceSqr
+                > MOBLETS_STAY_COMBAT_RADIUS_SQR) {
+
+            mob.getNavigation().moveTo(
+                    anchorX,
+                    anchorY,
+                    anchorZ,
+                    1.0D
+            );
         }
     }
 

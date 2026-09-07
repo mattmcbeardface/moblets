@@ -7,6 +7,9 @@ import com.moblets.BabySkeletonWolfFleeGoal;
 import com.moblets.taming.MobletCuriosityGoal;
 import com.moblets.taming.MobletFollowOwnerGoal;
 import com.moblets.taming.MobletStayGoal;
+import com.moblets.taming.MobletOwnerHurtByTargetGoal;
+import com.moblets.taming.MobletOwnerHurtTargetGoal;
+import com.moblets.taming.MobletTamedTargetGuardGoal;
 
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
@@ -38,6 +41,28 @@ public abstract class AbstractSkeletonGoalMixin extends Monster {
     ) {
         AbstractSkeleton skeleton =
                 (AbstractSkeleton) (Object) this;
+
+        /*
+         * Tamed combat targeting.
+         *
+         * 0 - defend owner
+         * 1 - attack what owner attacks
+         * 2 - block normal Monster target selection
+         */
+        this.targetSelector.addGoal(
+                0,
+                new MobletOwnerHurtByTargetGoal(skeleton)
+        );
+
+        this.targetSelector.addGoal(
+                1,
+                new MobletOwnerHurtTargetGoal(skeleton)
+        );
+
+        this.targetSelector.addGoal(
+                2,
+                new MobletTamedTargetGuardGoal(skeleton)
+        );
 
         /*
          * AbstractSkeleton registers exactly one AvoidEntityGoal:

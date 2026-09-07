@@ -42,7 +42,9 @@ public final class MobletFollowOwnerGoal extends Goal {
                 (MobletTameState) this.mob;
 
         if (!state.moblets$isTamed()
-                || state.moblets$isOrderedToStay()) {
+                || state.moblets$isOrderedToStay()
+                || (this.mob.getTarget() != null
+                        && this.mob.getTarget().isAlive())) {
             return false;
         }
 
@@ -65,6 +67,8 @@ public final class MobletFollowOwnerGoal extends Goal {
 
         if (!state.moblets$isTamed()
                 || state.moblets$isOrderedToStay()
+                || (this.mob.getTarget() != null
+                        && this.mob.getTarget().isAlive())
                 || this.owner == null
                 || !this.owner.isAlive()
                 || this.owner.isSpectator()) {
@@ -77,7 +81,6 @@ public final class MobletFollowOwnerGoal extends Goal {
 
     @Override
     public void start() {
-        this.mob.setTarget(null);
     }
 
     @Override
@@ -96,8 +99,6 @@ public final class MobletFollowOwnerGoal extends Goal {
         if (this.owner == null) {
             return;
         }
-
-        this.mob.setTarget(null);
 
         this.mob.getNavigation().moveTo(
                 this.owner,

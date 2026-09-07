@@ -37,7 +37,9 @@ public final class MobletStayGoal extends Goal {
 
         return state.moblets$isTamed()
                 && state.moblets$isOrderedToStay()
-                && state.moblets$getStayAnchor() != null;
+                && state.moblets$getStayAnchor() != null
+                && (this.mob.getTarget() == null
+                        || !this.mob.getTarget().isAlive());
     }
 
     @Override
