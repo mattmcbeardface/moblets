@@ -4,6 +4,7 @@ import com.moblets.AdultSkeletonWolfAvoidGoal;
 import com.moblets.BabySkeletonRushGoal;
 import com.moblets.BabySkeletonWolfCuriosityGoal;
 import com.moblets.BabySkeletonWolfFleeGoal;
+import com.moblets.taming.MobletCuriosityGoal;
 
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
@@ -56,8 +57,17 @@ public abstract class AbstractSkeletonGoalMixin extends Monster {
          * Being bitten by a wolf overrides everything else.
          */
         this.goalSelector.addGoal(
-                1,
+                0,
                 new BabySkeletonWolfFleeGoal(skeleton)
+        );
+
+        /*
+         * A wild Skeleton Moblet becomes inquisitive when a
+         * nearby player presents its taming item.
+         */
+        this.goalSelector.addGoal(
+                1,
+                new MobletCuriosityGoal(skeleton)
         );
 
         /*
