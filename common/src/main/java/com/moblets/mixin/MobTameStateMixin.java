@@ -16,6 +16,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.skeleton.AbstractSkeleton;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.ValueInput;
@@ -422,6 +423,104 @@ public abstract class MobTameStateMixin
                     return;
                 }
             }
+        }
+
+        /*
+         * Owner-managed Skeleton bow equipment.
+         *
+         * Right-clicking a tamed baby Skeleton with a bow equips
+         * that exact bow, preserving enchantments, durability and
+         * other item components. The previous main-hand item is
+         * returned to the owner.
+         */
+        if (hand == InteractionHand.MAIN_HAND
+                && mob instanceof AbstractSkeleton skeleton
+                && BabySkeletons.isBaby(skeleton)
+                && player.getItemInHand(hand).getItem()
+                        instanceof BowItem) {
+
+            ItemStack held =
+                    player.getItemInHand(hand);
+
+            /*
+             * Client:
+             *
+             * Consume this as the Moblet interaction so the bow's
+             * normal player-use action does not also occur.
+             */
+            if (mob.level().isClientSide()) {
+                cir.setReturnValue(
+                        InteractionResult.SUCCESS
+                );
+                return;
+            }
+
+            /*
+             * Server-authoritative ownership check.
+             */
+            if (!moblets$isOwnedBy(player)) {
+                cir.setReturnValue(
+                        InteractionResult.CONSUME
+                );
+                return;
+            }
+
+            ItemStack previous =
+                    mob.getItemBySlot(
+                            EquipmentSlot.MAINHAND
+                    );
+
+            ItemStack equipped =
+                    held.copyWithCount(1);
+
+            mob.setItemSlot(
+                    EquipmentSlot.MAINHAND,
+                    equipped
+            );
+
+            /*
+             * Make player-supplied weapons reliably recoverable
+             * if the Moblet dies.
+             */
+            mob.setGuaranteedDrop(
+                    EquipmentSlot.MAINHAND
+            );
+
+            if (!player.getAbilities().instabuild) {
+                held.shrink(1);
+            }
+
+            /*
+             * Return the previous weapon/item to the owner.
+             */
+            if (!previous.isEmpty()) {
+                ItemStack returned =
+                        previous.copy();
+
+                if (!player.addItem(returned)) {
+                    player.drop(
+                            returned,
+                            false
+                    );
+                }
+            }
+
+            /*
+             * Refresh Skeleton combat goals immediately so the
+             * newly equipped bow is recognized.
+             */
+            skeleton.reassessWeaponGoal();
+
+            player.sendOverlayMessage(
+                    Component.literal(
+                            "Moblet bow equipped."
+                    )
+            );
+
+            cir.setReturnValue(
+                    InteractionResult.SUCCESS_SERVER
+            );
+            return;
         }
 
         /*
