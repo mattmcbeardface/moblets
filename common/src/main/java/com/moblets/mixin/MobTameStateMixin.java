@@ -5,7 +5,6 @@ import java.util.UUID;
 import net.minecraft.core.BlockPos;
 
 import com.moblets.taming.MobletTameState;
-import com.moblets.taming.MobletSentryMovement;
 import com.moblets.taming.MobletTaming;
 
 import net.minecraft.network.chat.Component;
@@ -336,11 +335,6 @@ public abstract class MobTameStateMixin
             return;
         }
 
-        MobletSentryMovement.tick(
-                mob,
-                this.moblets$stayAnchor,
-                target
-        );
     }
 
     /*

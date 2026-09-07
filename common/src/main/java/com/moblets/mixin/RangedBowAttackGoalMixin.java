@@ -48,6 +48,31 @@ public abstract class RangedBowAttackGoalMixin {
     }
 
     /*
+     * Stay mode has exactly one combat movement authority:
+     * MobletSkeletonSentryGoal / MobletSentryMovement.
+     *
+     * Vanilla bow AI still aims, draws and fires, but it must
+     * not cancel a sentry movement command by stopping
+     * navigation.
+     */
+    @Redirect(
+            method = "tick",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/world/entity/ai/navigation/PathNavigation;stop()V"
+            )
+    )
+    private void moblets$disableSentryBowNavigationStop(
+            PathNavigation navigation
+    ) {
+        if (moblets$isSentry()) {
+            return;
+        }
+
+        navigation.stop();
+    }
+
+    /*
      * Vanilla ranged combat begins random clockwise/backwards
      * strafing after maintaining line of sight.
      *

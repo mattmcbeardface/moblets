@@ -24,8 +24,36 @@ public final class MobletSkeletonSentryGoal extends Goal {
 
     private static final int SCAN_INTERVAL_TICKS = 10;
 
+    /*
+     * Vanilla Skeleton bow combat uses a 15-block attack radius.
+     *
+     * Its backwards-strafe hysteresis works out to:
+     *
+     *   < 7.5 blocks  -> force backwards movement
+     *   > ~13 blocks  -> stop backwards movement
+     *
+     * Keeping those two thresholds separate is what prevents
+     * the "two steps backward, then stop" behavior we were
+     * seeing in Stay mode.
+     */
+    private static final double EVADE_START_DISTANCE_SQR =
+            56.25D;
+
+    private static final double EVADE_STOP_DISTANCE_SQR =
+            168.75D;
+
+    private static final double EVADE_VERTICAL_RANGE =
+            2.0D;
+
+    private static final int STRAFE_DIRECTION_INTERVAL =
+            20;
+
     private final Mob mob;
     private int scanCooldown;
+
+    private boolean evading;
+    private boolean strafeClockwise;
+    private int strafeDirectionTicks;
 
     public MobletSkeletonSentryGoal(Mob mob) {
         this.mob = mob;
@@ -44,6 +72,11 @@ public final class MobletSkeletonSentryGoal extends Goal {
     @Override
     public boolean canContinueToUse() {
         return canUse();
+    }
+
+    @Override
+    public void stop() {
+        resetEvasion();
     }
 
     @Override
@@ -67,15 +100,25 @@ public final class MobletSkeletonSentryGoal extends Goal {
                 this.mob.getTarget();
 
         /*
-         * Don't interfere with a valid target already being
-         * fought. The stay-combat controller handles the
-         * outer 16-block engagement cutoff.
+         * Once a valid target exists, this goal becomes the
+         * sole Stay-mode combat movement authority.
+         *
+         * RangedBowAttackGoal still aims, draws and fires, but
+         * its movement calls are suppressed for sentries.
          */
         if (current != null
                 && current.isAlive()
                 && !(current instanceof Player)) {
+
+            handleCombatMovement(
+                    anchor,
+                    current
+            );
+
             return;
         }
+
+        resetEvasion();
 
         if (this.scanCooldown > 0) {
             --this.scanCooldown;
@@ -141,6 +184,128 @@ public final class MobletSkeletonSentryGoal extends Goal {
         if (best != null) {
             this.mob.setTarget(best);
         }
+    }
+
+    private void handleCombatMovement(
+            BlockPos anchor,
+            LivingEntity target
+    ) {
+        double distanceSqr =
+                this.mob.distanceToSqr(target);
+
+        boolean sameVerticalBand =
+                Math.abs(
+                        target.getY()
+                                - this.mob.getY()
+                ) <= EVADE_VERTICAL_RANGE;
+
+        /*
+         * Enter evasion only once the attacker crosses the
+         * same close-range threshold used by vanilla bow AI.
+         */
+        if (!this.evading
+                && sameVerticalBand
+                && distanceSqr
+                        < EVADE_START_DISTANCE_SQR) {
+
+            this.evading = true;
+            this.strafeClockwise =
+                    this.mob.getRandom()
+                            .nextBoolean();
+
+            this.strafeDirectionTicks = 0;
+        }
+
+        /*
+         * Once retreating, keep retreating until real
+         * separation has been created.
+         *
+         * Do NOT shut evasion off merely because the target
+         * crossed back over the entry threshold.
+         */
+        if (this.evading
+                && (!sameVerticalBand
+                        || distanceSqr
+                                > EVADE_STOP_DISTANCE_SQR)) {
+
+            resetEvasion();
+        }
+
+        if (this.evading) {
+            ++this.strafeDirectionTicks;
+
+            /*
+             * Keep a little of vanilla's lateral variation,
+             * without ever randomly cancelling the backward
+             * component.
+             */
+            if (this.strafeDirectionTicks
+                    >= STRAFE_DIRECTION_INTERVAL) {
+
+                this.strafeDirectionTicks = 0;
+
+                if (this.mob.getRandom()
+                        .nextFloat() < 0.30F) {
+
+                    this.strafeClockwise =
+                            !this.strafeClockwise;
+                }
+            }
+
+            /*
+             * Prefer the chosen lateral direction. If terrain
+             * makes it unsafe, try the opposite side before
+             * giving up on movement.
+             */
+            if (MobletSentryMovement
+                    .tryEvasionStep(
+                            this.mob,
+                            anchor,
+                            target,
+                            this.strafeClockwise)) {
+                return;
+            }
+
+            if (MobletSentryMovement
+                    .tryEvasionStep(
+                            this.mob,
+                            anchor,
+                            target,
+                            !this.strafeClockwise)) {
+
+                this.strafeClockwise =
+                        !this.strafeClockwise;
+
+                return;
+            }
+
+            /*
+             * No safe evasive movement exists. Hold the post
+             * and keep fighting rather than stepping into an
+             * unsafe location.
+             */
+            this.mob.getNavigation().stop();
+            this.mob.getMoveControl().setWait();
+            return;
+        }
+
+        /*
+         * Outside melee pressure, use the existing deliberate
+         * sentry movement:
+         *
+         *   LOS     -> hold firing position
+         *   no LOS  -> safely reposition inside normal radius
+         */
+        MobletSentryMovement.tick(
+                this.mob,
+                anchor,
+                target
+        );
+    }
+
+    private void resetEvasion() {
+        this.evading = false;
+        this.strafeDirectionTicks = 0;
     }
 
     private boolean isCandidate(Mob candidate) {

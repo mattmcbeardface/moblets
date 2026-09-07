@@ -16,6 +16,15 @@ public final class MobletSentryMovement {
     private static final double MOVEMENT_RADIUS_SQR =
             MOVEMENT_RADIUS * MOVEMENT_RADIUS;
 
+    private static final float EVADE_BACKWARDS =
+            -0.50F;
+
+    private static final float EVADE_SIDEWAYS =
+            0.50F;
+
+    private static final double EVADE_PROBE_DISTANCE =
+            1.25D;
+
     private static final int MAX_VERTICAL_OFFSET =
             2;
 
@@ -43,42 +52,15 @@ public final class MobletSentryMovement {
             return;
         }
 
-        double anchorX =
-                anchor.getX() + 0.5D;
-
-        double anchorZ =
-                anchor.getZ() + 0.5D;
-
-        double mobDx =
-                mob.getX() - anchorX;
-
-        double mobDz =
-                mob.getZ() - anchorZ;
-
-        double currentRadiusSqr =
-                mobDx * mobDx
-                        + mobDz * mobDz;
-
         /*
-         * If knockback or another external force displaced the
-         * sentry outside its working area, prioritize returning
-         * to the post.
+         * Do not pull an actively fighting sentry back toward
+         * its anchor.
+         *
+         * The five-block radius limits deliberate sentry
+         * repositioning, but melee evasion may temporarily
+         * carry the Moblet farther away. MobletStayGoal returns
+         * it to the anchor after combat ends.
          */
-        if (currentRadiusSqr
-                > MOVEMENT_RADIUS_SQR
-                || Math.abs(
-                        mob.getY() - anchor.getY()
-                ) > MAX_VERTICAL_OFFSET) {
-
-            moveToward(
-                    mob,
-                    anchor,
-                    anchor
-            );
-
-            return;
-        }
-
         /*
          * If we already have a shot, hold the position.
          *
@@ -109,6 +91,148 @@ public final class MobletSentryMovement {
                     destination
             );
         }
+    }
+
+    public static boolean tryEvasionStep(
+            Mob mob,
+            BlockPos anchor,
+            LivingEntity target,
+            boolean clockwise
+    ) {
+        double towardX =
+                target.getX() - mob.getX();
+
+        double towardZ =
+                target.getZ() - mob.getZ();
+
+        double length =
+                Math.sqrt(
+                        towardX * towardX
+                                + towardZ * towardZ
+                );
+
+        if (length < 0.001D) {
+            return false;
+        }
+
+        towardX /= length;
+        towardZ /= length;
+
+        /*
+         * Backward vector relative to the target.
+         */
+        double awayX =
+                -towardX;
+
+        double awayZ =
+                -towardZ;
+
+        /*
+         * Perpendicular vector for vanilla-like lateral
+         * strafing.
+         */
+        double sideX =
+                -towardZ;
+
+        double sideZ =
+                towardX;
+
+        double sideSign =
+                clockwise ? 1.0D : -1.0D;
+
+        double moveX =
+                awayX
+                        + sideX * sideSign;
+
+        double moveZ =
+                awayZ
+                        + sideZ * sideSign;
+
+        double moveLength =
+                Math.sqrt(
+                        moveX * moveX
+                                + moveZ * moveZ
+                );
+
+        if (moveLength < 0.001D) {
+            return false;
+        }
+
+        moveX /= moveLength;
+        moveZ /= moveLength;
+
+        BlockPos candidate =
+                new BlockPos(
+                        (int) Math.floor(
+                                mob.getX()
+                                        + moveX
+                                        * EVADE_PROBE_DISTANCE
+                        ),
+                        mob.blockPosition().getY(),
+                        (int) Math.floor(
+                                mob.getZ()
+                                        + moveZ
+                                        * EVADE_PROBE_DISTANCE
+                        )
+                );
+
+        if (!isSafeEvasionCandidate(
+                mob,
+                candidate)) {
+            return false;
+        }
+
+        /*
+         * RangedBowAttackGoal's movement calls are disabled in
+         * Stay mode. This is therefore the single movement
+         * command controlling melee evasion.
+         */
+        mob.getNavigation().stop();
+
+        mob.lookAt(
+                target,
+                30.0F,
+                30.0F
+        );
+
+        mob.getMoveControl().strafe(
+                EVADE_BACKWARDS,
+                clockwise
+                        ? EVADE_SIDEWAYS
+                        : -EVADE_SIDEWAYS
+        );
+
+        return true;
+    }
+
+    private static boolean isSafeEvasionCandidate(
+            Mob mob,
+            BlockPos candidate
+    ) {
+        Level level =
+                mob.level();
+
+        BlockPos floor =
+                candidate.below();
+
+        if (!level.getBlockState(floor)
+                .isFaceSturdy(
+                        level,
+                        floor,
+                        Direction.UP
+                )) {
+            return false;
+        }
+
+        Path path =
+                mob.getNavigation()
+                        .createPath(
+                                candidate,
+                                0
+                        );
+
+        return MobletSafeNavigation
+                .isSafePath(path);
     }
 
     private static BlockPos findRepositionDestination(
@@ -228,6 +352,20 @@ public final class MobletSentryMovement {
             BlockPos anchor,
             BlockPos candidate
     ) {
+        return isSafeCandidate(
+                mob,
+                anchor,
+                candidate,
+                MOVEMENT_RADIUS_SQR
+        );
+    }
+
+    private static boolean isSafeCandidate(
+            Mob mob,
+            BlockPos anchor,
+            BlockPos candidate,
+            double allowedRadiusSqr
+    ) {
         double anchorX =
                 anchor.getX() + 0.5D;
 
@@ -247,7 +385,7 @@ public final class MobletSentryMovement {
                 candidateZ - anchorZ;
 
         if (dx * dx + dz * dz
-                > MOVEMENT_RADIUS_SQR) {
+                > allowedRadiusSqr) {
             return false;
         }
 
@@ -307,7 +445,7 @@ public final class MobletSentryMovement {
 
             if (nodeDx * nodeDx
                     + nodeDz * nodeDz
-                    > MOVEMENT_RADIUS_SQR) {
+                    > allowedRadiusSqr) {
                 return false;
             }
 
