@@ -5,6 +5,7 @@ import java.util.UUID;
 import com.moblets.taming.MobletTameState;
 import com.moblets.taming.MobletTaming;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -30,6 +31,10 @@ public abstract class MobTameStateMixin
             "MobletsOwner";
 
     @Unique
+    private static final String MOBLETS_STAY_KEY =
+            "MobletsStay";
+
+    @Unique
     private UUID moblets$ownerUuid;
 
     @Unique
@@ -43,6 +48,9 @@ public abstract class MobTameStateMixin
 
     @Unique
     private int moblets$consideringTicks;
+
+    @Unique
+    private boolean moblets$orderedToStay;
 
     @Override
     public boolean moblets$isTamed() {
@@ -123,6 +131,18 @@ public abstract class MobTameStateMixin
         this.moblets$consideringTicks = 0;
     }
 
+    @Override
+    public boolean moblets$isOrderedToStay() {
+        return this.moblets$orderedToStay;
+    }
+
+    @Override
+    public void moblets$setOrderedToStay(
+            boolean stay
+    ) {
+        this.moblets$orderedToStay = stay;
+    }
+
     @Inject(
             method = "interact",
             at = @At("HEAD"),
@@ -134,9 +154,42 @@ public abstract class MobTameStateMixin
             Vec3 hitPosition,
             CallbackInfoReturnable<InteractionResult> cir
     ) {
+        Mob mob =
+                (Mob) (Object) this;
+
+        /*
+         * Owner-only empty-hand interaction toggles the
+         * companion between Follow and Stay.
+         */
+        if (hand == InteractionHand.MAIN_HAND
+                && moblets$isOwnedBy(player)
+                && player.getItemInHand(hand).isEmpty()) {
+
+            if (!mob.level().isClientSide()) {
+                this.moblets$orderedToStay =
+                        !this.moblets$orderedToStay;
+
+                mob.setTarget(null);
+                mob.getNavigation().stop();
+
+                player.sendOverlayMessage(
+                        Component.literal(
+                                this.moblets$orderedToStay
+                                        ? "Moblet is staying."
+                                        : "Moblet is following."
+                        )
+                );
+            }
+
+            cir.setReturnValue(
+                    InteractionResult.SUCCESS
+            );
+            return;
+        }
+
         InteractionResult result =
                 MobletTaming.tryTame(
-                        (Mob) (Object) this,
+                        mob,
                         player,
                         hand
                 );
@@ -155,8 +208,13 @@ public abstract class MobTameStateMixin
             LivingEntity target,
             CallbackInfo ci
     ) {
-        if (target instanceof Player player
-                && moblets$isOwnedBy(player)) {
+        /*
+         * Tamed Moblets are friendly companions, not PvP weapons.
+         * Once tamed, they must never acquire any player as an
+         * attack target, including players other than their owner.
+         */
+        if (moblets$isTamed()
+                && target instanceof Player) {
             ci.cancel();
         }
     }
@@ -173,6 +231,11 @@ public abstract class MobTameStateMixin
             output.putString(
                     MOBLETS_OWNER_KEY,
                     this.moblets$ownerUuid.toString()
+            );
+
+            output.putBoolean(
+                    MOBLETS_STAY_KEY,
+                    this.moblets$orderedToStay
             );
         }
     }
@@ -201,6 +264,12 @@ public abstract class MobTameStateMixin
                 this.moblets$ownerUuid = null;
             }
         }
+
+        this.moblets$orderedToStay =
+                input.getBooleanOr(
+                        MOBLETS_STAY_KEY,
+                        false
+                );
 
         /*
          * Curiosity and consideration are transient states.

@@ -33,6 +33,10 @@ public interface MobletTameState {
 
     void moblets$clearConsideringTame();
 
+    boolean moblets$isOrderedToStay();
+
+    void moblets$setOrderedToStay(boolean stay);
+
     default boolean moblets$isOwnedBy(Player player) {
         UUID ownerUuid = moblets$getOwnerUuid();
 

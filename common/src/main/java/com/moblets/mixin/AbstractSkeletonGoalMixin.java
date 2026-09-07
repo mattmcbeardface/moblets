@@ -5,6 +5,8 @@ import com.moblets.BabySkeletonRushGoal;
 import com.moblets.BabySkeletonWolfCuriosityGoal;
 import com.moblets.BabySkeletonWolfFleeGoal;
 import com.moblets.taming.MobletCuriosityGoal;
+import com.moblets.taming.MobletFollowOwnerGoal;
+import com.moblets.taming.MobletStayGoal;
 
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
@@ -54,7 +56,17 @@ public abstract class AbstractSkeletonGoalMixin extends Monster {
         );
 
         /*
-         * Being bitten by a wolf overrides everything else.
+         * An ordered-to-stay Moblet owns movement completely.
+         * It can still look around, but it cannot wander,
+         * follow, strafe, or run off under vanilla AI.
+         */
+        this.goalSelector.addGoal(
+                0,
+                new MobletStayGoal(skeleton)
+        );
+
+        /*
+         * Being bitten by a wolf overrides normal wild behavior.
          */
         this.goalSelector.addGoal(
                 0,
@@ -68,6 +80,15 @@ public abstract class AbstractSkeletonGoalMixin extends Monster {
         this.goalSelector.addGoal(
                 1,
                 new MobletCuriosityGoal(skeleton)
+        );
+
+        /*
+         * Once tamed, staying near the owner takes precedence
+         * over the wild juvenile curiosity behaviors below.
+         */
+        this.goalSelector.addGoal(
+                2,
+                new MobletFollowOwnerGoal(skeleton)
         );
 
         /*
