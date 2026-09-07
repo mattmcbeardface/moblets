@@ -147,6 +147,25 @@ public final class BabySkeletons {
         skeleton.setHealth(
                 skeleton.getMaxHealth()
         );
+
+        /*
+         * Wild baby Wither Skeletons deal 50% of the adult
+         * attack damage. Taming turns the Wither into our melee
+         * specialist, so restore the vanilla adult attack
+         * attribute while retaining its baby scale/speed.
+         */
+        if (skeleton instanceof WitherSkeleton) {
+            AttributeInstance damage =
+                    skeleton.getAttribute(
+                            Attributes.ATTACK_DAMAGE
+                    );
+
+            if (damage != null) {
+                damage.removeModifier(
+                        BABY_WITHER_DAMAGE_ID
+                );
+            }
+        }
     }
 
     public static boolean isRangedFamily(

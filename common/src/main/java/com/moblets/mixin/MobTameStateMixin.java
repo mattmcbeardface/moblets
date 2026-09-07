@@ -9,12 +9,14 @@ import com.moblets.taming.MobletTameState;
 import com.moblets.taming.MobletTaming;
 
 import net.minecraft.network.chat.Component;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.skeleton.AbstractSkeleton;
+import net.minecraft.world.entity.monster.skeleton.WitherSkeleton;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.ItemStack;
@@ -515,6 +517,95 @@ public abstract class MobTameStateMixin
             player.sendOverlayMessage(
                     Component.literal(
                             "Moblet bow equipped."
+                    )
+            );
+
+            cir.setReturnValue(
+                    InteractionResult.SUCCESS_SERVER
+            );
+            return;
+        }
+
+        /*
+         * Owner-managed Wither Skeleton sword equipment.
+         *
+         * The Wither Moblet is the melee specialist: swords are
+         * handled as equipment, while bows and other items retain
+         * the ordinary Follow / Stay interaction.
+         */
+        if (hand == InteractionHand.MAIN_HAND
+                && mob instanceof WitherSkeleton witherSkeleton
+                && BabySkeletons.isBaby(witherSkeleton)
+                && player.getItemInHand(hand)
+                        .is(ItemTags.SWORDS)) {
+
+            ItemStack held =
+                    player.getItemInHand(hand);
+
+            /*
+             * Consume the client interaction so the sword does
+             * not perform its normal player-side item action.
+             * Ownership remains server-authoritative.
+             */
+            if (mob.level().isClientSide()) {
+                cir.setReturnValue(
+                        InteractionResult.SUCCESS
+                );
+                return;
+            }
+
+            if (!moblets$isOwnedBy(player)) {
+                cir.setReturnValue(
+                        InteractionResult.CONSUME
+                );
+                return;
+            }
+
+            ItemStack previous =
+                    mob.getItemBySlot(
+                            EquipmentSlot.MAINHAND
+                    );
+
+            ItemStack equipped =
+                    held.copyWithCount(1);
+
+            mob.setItemSlot(
+                    EquipmentSlot.MAINHAND,
+                    equipped
+            );
+
+            mob.setGuaranteedDrop(
+                    EquipmentSlot.MAINHAND
+            );
+
+            if (!player.getAbilities().instabuild) {
+                held.shrink(1);
+            }
+
+            /*
+             * Return the previous weapon/item to the owner.
+             */
+            if (!previous.isEmpty()) {
+                ItemStack returned =
+                        previous.copy();
+
+                if (!player.addItem(returned)) {
+                    player.drop(
+                            returned,
+                            false
+                    );
+                }
+            }
+
+            /*
+             * Refresh AbstractSkeleton's weapon goal immediately
+             * so the newly equipped sword is used for melee.
+             */
+            witherSkeleton.reassessWeaponGoal();
+
+            player.sendOverlayMessage(
+                    Component.literal(
+                            "Moblet sword equipped."
                     )
             );
 
