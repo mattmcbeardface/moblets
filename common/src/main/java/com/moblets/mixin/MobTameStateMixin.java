@@ -427,6 +427,26 @@ public abstract class MobTameStateMixin
         }
     }
 
+    /*
+     * Tamed Moblets no longer burn in direct sunlight.
+     *
+     * This hooks only Minecraft's daylight burn check. It does
+     * not make the Moblet fire-immune, so lava, fire blocks,
+     * flaming projectiles, etc. still behave normally.
+     */
+    @Inject(
+            method = "isSunBurnTick",
+            at = @At("HEAD"),
+            cancellable = true
+    )
+    private void moblets$preventTamedSunBurn(
+            CallbackInfoReturnable<Boolean> cir
+    ) {
+        if (this.moblets$isTamed()) {
+            cir.setReturnValue(false);
+        }
+    }
+
     @Inject(
             method = "setTarget",
             at = @At("HEAD"),
