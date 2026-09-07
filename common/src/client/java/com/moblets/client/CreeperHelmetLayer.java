@@ -117,6 +117,18 @@ public final class CreeperHelmetLayer
                     );
         }
 
+        poseStack.translate(
+                0.0F,
+                -1.0F / 16.0F,
+                0.0F
+        );
+
+        poseStack.scale(
+                0.92F,
+                0.92F,
+                0.92F
+        );
+
         /*
          * EquipmentLayerRenderer snapshots the current matrix in
          * its deferred model submit. Its later setupAnim call can
