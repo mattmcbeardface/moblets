@@ -23,7 +23,8 @@
     "VillagerModelMixin",
     "TraderLlamaLeashRendererMixin",
     "CamelHuskRendererMixin",
-    "CamelModelMixin"
+    "CamelModelMixin",
+    "CreeperRenderStateMixin"
   ],
   "injectors": {
     "defaultRequire": 1

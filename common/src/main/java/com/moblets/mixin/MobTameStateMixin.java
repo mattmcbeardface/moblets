@@ -331,6 +331,160 @@ public abstract class MobTameStateMixin
         }
 
         /*
+         * Baby Creeper helmet interaction.
+         *
+         * Creeper companions may wear HEAD equipment only.
+         * Chestplates, leggings and boots deliberately fall
+         * through to the ordinary Follow / Stay interaction.
+         */
+        if (hand == InteractionHand.MAIN_HAND
+                && mob instanceof Creeper creeper
+                && BabyCreepers.isBaby(creeper)) {
+
+            ItemStack held =
+                    player.getItemInHand(hand);
+
+            if (!held.isEmpty()) {
+                EquipmentSlot slot =
+                        mob.getEquipmentSlotForItem(
+                                held
+                        );
+
+                if (slot == EquipmentSlot.HEAD
+                        && mob.isEquippableInSlot(
+                                held,
+                                EquipmentSlot.HEAD
+                        )) {
+
+                    /*
+                     * Consume client-side so a helmet does not
+                     * equip onto the player as well.
+                     */
+                    if (mob.level().isClientSide()) {
+                        cir.setReturnValue(
+                                InteractionResult.SUCCESS
+                        );
+                        return;
+                    }
+
+                    if (!moblets$isOwnedBy(player)) {
+                        cir.setReturnValue(
+                                InteractionResult.CONSUME
+                        );
+                        return;
+                    }
+
+                    ItemStack previous =
+                            mob.getItemBySlot(
+                                    EquipmentSlot.HEAD
+                            );
+
+                    ItemStack equipped =
+                            held.copyWithCount(1);
+
+                    mob.setItemSlot(
+                            EquipmentSlot.HEAD,
+                            equipped
+                    );
+
+                    mob.setGuaranteedDrop(
+                            EquipmentSlot.HEAD
+                    );
+
+                    if (!player.getAbilities().instabuild) {
+                        held.shrink(1);
+                    }
+
+                    if (!previous.isEmpty()) {
+                        ItemStack returned =
+                                previous.copy();
+
+                        if (!player.addItem(returned)) {
+                            player.drop(
+                                    returned,
+                                    false
+                            );
+                        }
+                    }
+
+                    player.sendOverlayMessage(
+                            Component.literal(
+                                    "Moblet helmet equipped."
+                            )
+                    );
+
+                    cir.setReturnValue(
+                            InteractionResult.SUCCESS_SERVER
+                    );
+                    return;
+                }
+            }
+        }
+
+        /*
+         * Shift + empty hand removes the Baby Creeper's helmet.
+         */
+        if (hand == InteractionHand.MAIN_HAND
+                && mob instanceof Creeper creeper
+                && BabyCreepers.isBaby(creeper)
+                && player.isShiftKeyDown()
+                && player.getItemInHand(hand).isEmpty()) {
+
+            if (mob.level().isClientSide()) {
+                cir.setReturnValue(
+                        InteractionResult.SUCCESS.withoutItem()
+                );
+                return;
+            }
+
+            if (!moblets$isOwnedBy(player)) {
+                cir.setReturnValue(
+                        InteractionResult.CONSUME
+                );
+                return;
+            }
+
+            ItemStack equipped =
+                    mob.getItemBySlot(
+                            EquipmentSlot.HEAD
+                    );
+
+            if (!equipped.isEmpty()) {
+                ItemStack returned =
+                        equipped.copy();
+
+                mob.setItemSlot(
+                        EquipmentSlot.HEAD,
+                        ItemStack.EMPTY
+                );
+
+                if (!player.addItem(returned)) {
+                    player.drop(
+                            returned,
+                            false
+                    );
+                }
+
+                player.sendOverlayMessage(
+                        Component.literal(
+                                "Moblet helmet removed."
+                        )
+                );
+            } else {
+                player.sendOverlayMessage(
+                        Component.literal(
+                                "Moblet has no helmet."
+                        )
+                );
+            }
+
+            cir.setReturnValue(
+                    InteractionResult.SUCCESS_SERVER
+            );
+            return;
+        }
+
+        /*
          * Skeleton Moblet armor interaction.
          *
          * Ownership is server-authoritative and is not currently
