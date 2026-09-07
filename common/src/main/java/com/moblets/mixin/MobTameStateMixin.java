@@ -2,6 +2,8 @@ package com.moblets.mixin;
 
 import java.util.UUID;
 
+import net.minecraft.core.BlockPos;
+
 import com.moblets.taming.MobletTameState;
 import com.moblets.taming.MobletTaming;
 
@@ -35,6 +37,22 @@ public abstract class MobTameStateMixin
             "MobletsStay";
 
     @Unique
+    private static final String MOBLETS_STAY_ANCHOR_SET_KEY =
+            "MobletsStayAnchorSet";
+
+    @Unique
+    private static final String MOBLETS_STAY_ANCHOR_X_KEY =
+            "MobletsStayAnchorX";
+
+    @Unique
+    private static final String MOBLETS_STAY_ANCHOR_Y_KEY =
+            "MobletsStayAnchorY";
+
+    @Unique
+    private static final String MOBLETS_STAY_ANCHOR_Z_KEY =
+            "MobletsStayAnchorZ";
+
+    @Unique
     private UUID moblets$ownerUuid;
 
     @Unique
@@ -51,6 +69,9 @@ public abstract class MobTameStateMixin
 
     @Unique
     private boolean moblets$orderedToStay;
+
+    @Unique
+    private BlockPos moblets$stayAnchor;
 
     @Override
     public boolean moblets$isTamed() {
@@ -143,6 +164,21 @@ public abstract class MobTameStateMixin
         this.moblets$orderedToStay = stay;
     }
 
+    @Override
+    public BlockPos moblets$getStayAnchor() {
+        return this.moblets$stayAnchor;
+    }
+
+    @Override
+    public void moblets$setStayAnchor(
+            BlockPos anchor
+    ) {
+        this.moblets$stayAnchor =
+                anchor == null
+                        ? null
+                        : anchor.immutable();
+    }
+
     @Inject(
             method = "interact",
             at = @At("HEAD"),
@@ -168,6 +204,13 @@ public abstract class MobTameStateMixin
             if (!mob.level().isClientSide()) {
                 this.moblets$orderedToStay =
                         !this.moblets$orderedToStay;
+
+                if (this.moblets$orderedToStay) {
+                    this.moblets$stayAnchor =
+                            mob.blockPosition().immutable();
+                } else {
+                    this.moblets$stayAnchor = null;
+                }
 
                 mob.setTarget(null);
                 mob.getNavigation().stop();
@@ -237,6 +280,28 @@ public abstract class MobTameStateMixin
                     MOBLETS_STAY_KEY,
                     this.moblets$orderedToStay
             );
+
+            if (this.moblets$stayAnchor != null) {
+                output.putBoolean(
+                        MOBLETS_STAY_ANCHOR_SET_KEY,
+                        true
+                );
+
+                output.putInt(
+                        MOBLETS_STAY_ANCHOR_X_KEY,
+                        this.moblets$stayAnchor.getX()
+                );
+
+                output.putInt(
+                        MOBLETS_STAY_ANCHOR_Y_KEY,
+                        this.moblets$stayAnchor.getY()
+                );
+
+                output.putInt(
+                        MOBLETS_STAY_ANCHOR_Z_KEY,
+                        this.moblets$stayAnchor.getZ()
+                );
+            }
         }
     }
 
@@ -270,6 +335,31 @@ public abstract class MobTameStateMixin
                         MOBLETS_STAY_KEY,
                         false
                 );
+
+        if (this.moblets$orderedToStay
+                && input.getBooleanOr(
+                        MOBLETS_STAY_ANCHOR_SET_KEY,
+                        false
+                )) {
+
+            this.moblets$stayAnchor =
+                    new BlockPos(
+                            input.getIntOr(
+                                    MOBLETS_STAY_ANCHOR_X_KEY,
+                                    0
+                            ),
+                            input.getIntOr(
+                                    MOBLETS_STAY_ANCHOR_Y_KEY,
+                                    0
+                            ),
+                            input.getIntOr(
+                                    MOBLETS_STAY_ANCHOR_Z_KEY,
+                                    0
+                            )
+                    );
+        } else {
+            this.moblets$stayAnchor = null;
+        }
 
         /*
          * Curiosity and consideration are transient states.

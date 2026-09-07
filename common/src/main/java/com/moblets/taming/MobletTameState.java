@@ -2,6 +2,8 @@ package com.moblets.taming;
 
 import java.util.UUID;
 
+import net.minecraft.core.BlockPos;
+
 import net.minecraft.world.entity.player.Player;
 
 public interface MobletTameState {
@@ -36,6 +38,10 @@ public interface MobletTameState {
     boolean moblets$isOrderedToStay();
 
     void moblets$setOrderedToStay(boolean stay);
+
+    BlockPos moblets$getStayAnchor();
+
+    void moblets$setStayAnchor(BlockPos anchor);
 
     default boolean moblets$isOwnedBy(Player player) {
         UUID ownerUuid = moblets$getOwnerUuid();
