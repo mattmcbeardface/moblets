@@ -70,6 +70,13 @@ public final class MobletCuriosityGoal extends Goal {
             return false;
         }
 
+        MobletTameState tameState =
+                (MobletTameState) this.mob;
+
+        if (tameState.moblets$isTamed()) {
+            return false;
+        }
+
         MobletDefinition definition =
                 MobletRegistry.byEntityType(
                         this.mob.getType()
@@ -154,6 +161,22 @@ public final class MobletCuriosityGoal extends Goal {
             return false;
         }
 
+        MobletTameState tameState =
+                (MobletTameState) this.mob;
+
+        if (tameState.moblets$isTamed()) {
+            return false;
+        }
+
+        /*
+         * Once an attempt has started, hold this goal through
+         * the entire consideration animation regardless of
+         * whether the consumed item disappeared from the hand.
+         */
+        if (tameState.moblets$isConsideringTame()) {
+            return true;
+        }
+
         MobletTamingRule rule = rule();
 
         if (rule == null || !rule.appliesTo(this.mob)) {
@@ -200,6 +223,11 @@ public final class MobletCuriosityGoal extends Goal {
 
     @Override
     public void start() {
+        ((MobletTameState) this.mob)
+                .moblets$setCuriousPlayerUuid(
+                        this.curiousPlayer.getUUID()
+                );
+
         suppressHostility();
 
         /*
@@ -228,6 +256,9 @@ public final class MobletCuriosityGoal extends Goal {
         this.mob.getNavigation().stop();
         this.mob.stopUsingItem();
 
+        ((MobletTameState) this.mob)
+                .moblets$setCuriousPlayerUuid(null);
+
         this.curiousPlayer = null;
         this.missingItemTicks = 0;
         this.reachedPlayer = false;
@@ -240,6 +271,16 @@ public final class MobletCuriosityGoal extends Goal {
 
     @Override
     public void tick() {
+        MobletTameState tameState =
+                (MobletTameState) this.mob;
+
+        if (tameState.moblets$isConsideringTame()) {
+            MobletTaming.tickConsideration(
+                    this.mob
+            );
+            return;
+        }
+
         if (this.curiousPlayer == null) {
             return;
         }
