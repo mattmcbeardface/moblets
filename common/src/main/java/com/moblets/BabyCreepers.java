@@ -18,6 +18,9 @@ public final class BabyCreepers {
     private static final Identifier BABY_SPEED_ID =
             Identifier.fromNamespaceAndPath(Moblets.MOD_ID, "baby_creeper_speed");
 
+    private static final Identifier TAMED_HEALTH_ID =
+            Identifier.fromNamespaceAndPath(Moblets.MOD_ID, "tamed_creeper_health");
+
     private static final AttributeModifier BABY_SCALE =
             new AttributeModifier(
                     BABY_SCALE_ID,
@@ -48,6 +51,38 @@ public final class BabyCreepers {
 
         ((CreeperAccessor) creeper)
                 .babyMobs$setExplosionRadius(BABY_EXPLOSION_RADIUS);
+    }
+
+    public static void applyTamedStats(
+            Creeper creeper
+    ) {
+        if (!isBaby(creeper)) {
+            return;
+        }
+
+        AttributeInstance health =
+                creeper.getAttribute(
+                        Attributes.MAX_HEALTH
+                );
+
+        if (health == null) {
+            return;
+        }
+
+        double bonus =
+                30.0D - health.getBaseValue();
+
+        health.addOrReplacePermanentModifier(
+                new AttributeModifier(
+                        TAMED_HEALTH_ID,
+                        bonus,
+                        AttributeModifier.Operation.ADD_VALUE
+                )
+        );
+
+        creeper.setHealth(
+                creeper.getMaxHealth()
+        );
     }
 
     public static boolean isBaby(Creeper creeper) {

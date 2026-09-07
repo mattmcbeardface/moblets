@@ -1,5 +1,6 @@
 package com.moblets.taming;
 
+import com.moblets.BabyCreepers;
 import com.moblets.BabySkeletons;
 
 import com.moblets.config.MobletsConfig;
@@ -11,6 +12,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.monster.skeleton.AbstractSkeleton;
+import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -183,6 +185,12 @@ public final class MobletTaming {
 
                 BabySkeletons.applyTamedStats(
                         skeleton
+                );
+            } else if (mob instanceof Creeper creeper
+                    && BabyCreepers.isBaby(creeper)) {
+
+                BabyCreepers.applyTamedStats(
+                        creeper
                 );
             }
 

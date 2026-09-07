@@ -1,5 +1,6 @@
 package com.moblets.taming;
 
+import com.moblets.BabyCreepers;
 import java.util.IdentityHashMap;
 import java.util.Map;
 
@@ -10,6 +11,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.skeleton.AbstractSkeleton;
+import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
@@ -79,6 +81,15 @@ public final class MobletTamingRegistry {
                                 && BabySkeletons.isBaby(skeleton),
                         stack -> stack.is(Items.NETHER_WART),
                         0.20F
+                )
+        );
+        register(
+                EntityTypes.CREEPER,
+                new MobletTamingRule(
+                        mob -> mob instanceof Creeper creeper
+                                && BabyCreepers.isBaby(creeper),
+                        stack -> stack.is(Items.FIREWORK_ROCKET),
+                        0.25F
                 )
         );
     }

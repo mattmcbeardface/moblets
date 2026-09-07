@@ -5,6 +5,7 @@ import java.util.UUID;
 import net.minecraft.core.BlockPos;
 
 import com.moblets.BabySkeletons;
+import com.moblets.BabyCreepers;
 import com.moblets.taming.MobletTameState;
 import com.moblets.taming.MobletTaming;
 
@@ -16,6 +17,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.skeleton.AbstractSkeleton;
+import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.skeleton.WitherSkeleton;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BowItem;
@@ -211,7 +213,7 @@ public abstract class MobTameStateMixin
                 (Mob) (Object) this;
 
         /*
-         * Owner healing / health inspection for Skeleton Moblets.
+         * Owner healing / health inspection for Moblet companions.
          *
          * Normal right-click with a bone:
          *   heals 4 HP and consumes one bone in Survival.
@@ -220,9 +222,17 @@ public abstract class MobTameStateMixin
          *   reports health without healing or consuming.
          */
         if (hand == InteractionHand.MAIN_HAND
-                && mob instanceof AbstractSkeleton skeleton
-                && BabySkeletons.isBaby(skeleton)
-                && player.getItemInHand(hand).is(Items.BONE)) {
+                && (
+                        mob instanceof AbstractSkeleton skeleton
+                                && BabySkeletons.isBaby(skeleton)
+                                && player.getItemInHand(hand)
+                                        .is(Items.BONE)
+                        ||
+                        mob instanceof Creeper creeper
+                                && BabyCreepers.isBaby(creeper)
+                                && player.getItemInHand(hand)
+                                        .is(Items.GUNPOWDER)
+                )) {
 
             /*
              * Client recognizes the interaction immediately so
@@ -692,13 +702,18 @@ public abstract class MobTameStateMixin
          * becomes the universal Follow / Stay command.
          *
          * Client ownership is not currently synchronized, so the
-         * client consumes the interaction for baby Skeletons and
+         * client consumes the interaction for supported Moblets and
          * lets the server decide whether the player is actually
          * the owner.
          */
         if (hand == InteractionHand.MAIN_HAND
-                && mob instanceof AbstractSkeleton skeleton
-                && BabySkeletons.isBaby(skeleton)) {
+                && (
+                        mob instanceof AbstractSkeleton skeleton
+                                && BabySkeletons.isBaby(skeleton)
+                        ||
+                        mob instanceof Creeper creeper
+                                && BabyCreepers.isBaby(creeper)
+                )) {
 
             /*
              * Client prediction:

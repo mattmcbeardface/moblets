@@ -1,5 +1,6 @@
 package com.moblets;
 
+import com.moblets.taming.MobletTameState;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.ai.util.DefaultRandomPos;
@@ -54,6 +55,8 @@ public final class BabyCreeperFleeGoal extends AvoidEntityGoal<Player> {
     @Override
     public boolean canUse() {
         return BabyCreepers.isBaby(this.creeper)
+                && !((MobletTameState) this.creeper)
+                        .moblets$isTamed()
                 && !this.creeper.isIgnited()
                 && super.canUse();
     }
@@ -61,6 +64,8 @@ public final class BabyCreeperFleeGoal extends AvoidEntityGoal<Player> {
     @Override
     public boolean canContinueToUse() {
         if (!BabyCreepers.isBaby(this.creeper)
+                || ((MobletTameState) this.creeper)
+                        .moblets$isTamed()
                 || this.creeper.isIgnited()
                 || this.toAvoid == null
                 || this.toAvoid.isDeadOrDying()) {
