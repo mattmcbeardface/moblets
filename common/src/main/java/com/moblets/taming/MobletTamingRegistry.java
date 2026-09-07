@@ -5,11 +5,14 @@ import java.util.Map;
 
 import com.moblets.BabySkeletons;
 
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.skeleton.AbstractSkeleton;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.PotionContents;
+import net.minecraft.world.item.alchemy.Potions;
 
 public final class MobletTamingRegistry {
     private static final Map<EntityType<?>, MobletTamingRule> RULES =
@@ -23,6 +26,49 @@ public final class MobletTamingRegistry {
                                 && BabySkeletons.isBaby(skeleton),
                         stack -> stack.is(Items.STRING),
                         0.25F
+                )
+        );
+
+        register(
+                EntityTypes.STRAY,
+                new MobletTamingRule(
+                        mob -> mob instanceof AbstractSkeleton skeleton
+                                && BabySkeletons.isBaby(skeleton),
+                        stack -> stack.is(Items.RABBIT_HIDE),
+                        0.40F
+                )
+        );
+
+        register(
+                EntityTypes.BOGGED,
+                new MobletTamingRule(
+                        mob -> mob instanceof AbstractSkeleton skeleton
+                                && BabySkeletons.isBaby(skeleton),
+                        stack -> stack.is(Items.RED_MUSHROOM)
+                                || stack.is(Items.BROWN_MUSHROOM),
+                        0.25F
+                )
+        );
+
+        register(
+                EntityTypes.PARCHED,
+                new MobletTamingRule(
+                        mob -> mob instanceof AbstractSkeleton skeleton
+                                && BabySkeletons.isBaby(skeleton),
+                        stack -> {
+                            if (!stack.is(Items.POTION)) {
+                                return false;
+                            }
+
+                            PotionContents contents =
+                                    stack.get(
+                                            DataComponents.POTION_CONTENTS
+                                    );
+
+                            return contents != null
+                                    && contents.is(Potions.WATER);
+                        },
+                        0.50F
                 )
         );
     }

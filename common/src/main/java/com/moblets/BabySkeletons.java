@@ -1,6 +1,7 @@
 package com.moblets;
 
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -43,17 +44,6 @@ public final class BabySkeletons {
             new AttributeModifier(
                     BABY_WITHER_DAMAGE_ID,
                     -0.50D,
-                    AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
-            );
-
-    /*
-     * Vanilla Skeleton max health is 20 HP.
-     * +25% gives a tamed Skeleton Moblet 25 HP.
-     */
-    private static final AttributeModifier TAMED_HEALTH =
-            new AttributeModifier(
-                    TAMED_HEALTH_ID,
-                    0.25D,
                     AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
             );
 
@@ -101,24 +91,61 @@ public final class BabySkeletons {
             return;
         }
 
+        /*
+         * Companion health is intentionally defined as an
+         * explicit target rather than a percentage of each
+         * vanilla mob's base health.
+         *
+         * Skeleton:                 30 HP
+         * Stray / Bogged / Parched: 35 HP
+         *
+         * Wither Skeleton gets its own melee companion profile
+         * later and is deliberately excluded here.
+         */
+        double targetHealth;
+
+        if (skeleton.getType() == EntityTypes.SKELETON) {
+            targetHealth = 30.0D;
+        } else if (skeleton.getType() == EntityTypes.STRAY
+                || skeleton.getType() == EntityTypes.BOGGED
+                || skeleton.getType() == EntityTypes.PARCHED) {
+            targetHealth = 35.0D;
+        } else {
+            return;
+        }
+
         AttributeInstance health =
                 skeleton.getAttribute(
                         Attributes.MAX_HEALTH
                 );
 
-        if (health != null) {
-            health.addOrReplacePermanentModifier(
-                    TAMED_HEALTH
-            );
-
-            /*
-             * Successful taming starts the companion at
-             * its new full health.
-             */
-            skeleton.setHealth(
-                    skeleton.getMaxHealth()
-            );
+        if (health == null) {
+            return;
         }
+
+        /*
+         * ADD_VALUE lets us compensate for the different vanilla
+         * base-health values while keeping one persistent modifier
+         * ID. addOrReplace also migrates the old +25% modifier when
+         * this method is applied.
+         */
+        double bonus =
+                targetHealth - health.getBaseValue();
+
+        health.addOrReplacePermanentModifier(
+                new AttributeModifier(
+                        TAMED_HEALTH_ID,
+                        bonus,
+                        AttributeModifier.Operation.ADD_VALUE
+                )
+        );
+
+        /*
+         * A newly tamed companion starts at full health.
+         */
+        skeleton.setHealth(
+                skeleton.getMaxHealth()
+        );
     }
 
     public static boolean isBaby(AbstractSkeleton skeleton) {
