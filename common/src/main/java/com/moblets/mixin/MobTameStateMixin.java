@@ -4,15 +4,19 @@ import java.util.UUID;
 
 import net.minecraft.core.BlockPos;
 
+import com.moblets.BabySkeletons;
 import com.moblets.taming.MobletTameState;
 import com.moblets.taming.MobletTaming;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.monster.skeleton.AbstractSkeleton;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
@@ -203,11 +207,183 @@ public abstract class MobTameStateMixin
                 (Mob) (Object) this;
 
         /*
+         * Skeleton Moblet armor interaction.
+         *
+         * Ownership is server-authoritative and is not currently
+         * synchronized to the client. Therefore the client must
+         * recognize an armor-on-Moblet interaction without using
+         * moblets$isOwnedBy(), otherwise it falls through to the
+         * armor item's normal use action and equips the player.
+         *
+         * The server still performs the actual ownership check
+         * before changing any equipment.
+         */
+        if (hand == InteractionHand.MAIN_HAND
+                && mob instanceof AbstractSkeleton skeleton
+                && BabySkeletons.isBaby(skeleton)) {
+
+            ItemStack held =
+                    player.getItemInHand(hand);
+
+            if (!held.isEmpty()) {
+                EquipmentSlot slot =
+                        mob.getEquipmentSlotForItem(
+                                held
+                        );
+
+                if (slot.isArmor()
+                        && mob.isEquippableInSlot(
+                                held,
+                                slot)) {
+
+                    /*
+                     * Client:
+                     *
+                     * Consume the entity interaction as an ITEM
+                     * interaction. This prevents Minecraft from
+                     * subsequently invoking the armor's ordinary
+                     * self-equip action on the player.
+                     */
+                    if (mob.level().isClientSide()) {
+                        cir.setReturnValue(
+                                InteractionResult.SUCCESS
+                        );
+                        return;
+                    }
+
+                    /*
+                     * Server:
+                     *
+                     * Only the actual owner may change Moblet
+                     * equipment.
+                     */
+                    if (!moblets$isOwnedBy(player)) {
+                        cir.setReturnValue(
+                                InteractionResult.CONSUME
+                        );
+                        return;
+                    }
+
+                    ItemStack previous =
+                            mob.getItemBySlot(slot);
+
+                    /*
+                     * Preserve durability, enchantments, trims,
+                     * custom components, etc.
+                     */
+                    ItemStack equipped =
+                            held.copyWithCount(1);
+
+                    mob.setItemSlot(
+                            slot,
+                            equipped
+                    );
+
+                    /*
+                     * Player-supplied companion equipment should
+                     * reliably drop if the Moblet dies.
+                     */
+                    mob.setGuaranteedDrop(slot);
+
+                    if (!player.getAbilities().instabuild) {
+                        held.shrink(1);
+                    }
+
+                    /*
+                     * Replacing an existing piece returns the old
+                     * armor directly to the owner.
+                     */
+                    if (!previous.isEmpty()) {
+                        ItemStack returned =
+                                previous.copy();
+
+                        if (!player.addItem(returned)) {
+                            player.drop(
+                                    returned,
+                                    false
+                            );
+                        }
+                    }
+
+                    cir.setReturnValue(
+                            InteractionResult.SUCCESS_SERVER
+                    );
+                    return;
+                }
+            }
+        }
+
+        /*
+         * Owner-only sneak + empty-hand interaction removes all
+         * equipped armor from a Skeleton Moblet.
+         *
+         * This is deliberately separate from the ordinary
+         * empty-hand Follow/Stay interaction.
+         */
+        if (hand == InteractionHand.MAIN_HAND
+                && moblets$isOwnedBy(player)
+                && mob instanceof AbstractSkeleton
+                && player.isShiftKeyDown()
+                && player.getItemInHand(hand).isEmpty()) {
+
+            if (!mob.level().isClientSide()) {
+                boolean removedAny = false;
+
+                EquipmentSlot[] armorSlots = {
+                        EquipmentSlot.HEAD,
+                        EquipmentSlot.CHEST,
+                        EquipmentSlot.LEGS,
+                        EquipmentSlot.FEET
+                };
+
+                for (EquipmentSlot slot : armorSlots) {
+                    ItemStack equipped =
+                            mob.getItemBySlot(slot);
+
+                    if (equipped.isEmpty()) {
+                        continue;
+                    }
+
+                    ItemStack returned =
+                            equipped.copy();
+
+                    mob.setItemSlot(
+                            slot,
+                            ItemStack.EMPTY
+                    );
+
+                    if (!player.addItem(returned)) {
+                        player.drop(
+                                returned,
+                                false
+                        );
+                    }
+
+                    removedAny = true;
+                }
+
+                player.sendOverlayMessage(
+                        Component.literal(
+                                removedAny
+                                        ? "Moblet armor removed."
+                                        : "Moblet has no armor."
+                        )
+                );
+            }
+
+            cir.setReturnValue(
+                    InteractionResult.SUCCESS.withoutItem()
+            );
+            return;
+        }
+
+        /*
          * Owner-only empty-hand interaction toggles the
          * companion between Follow and Stay.
          */
         if (hand == InteractionHand.MAIN_HAND
                 && moblets$isOwnedBy(player)
+                && !player.isShiftKeyDown()
                 && player.getItemInHand(hand).isEmpty()) {
 
             if (!mob.level().isClientSide()) {
@@ -234,7 +410,7 @@ public abstract class MobTameStateMixin
             }
 
             cir.setReturnValue(
-                    InteractionResult.SUCCESS
+                    InteractionResult.SUCCESS.withoutItem()
             );
             return;
         }
