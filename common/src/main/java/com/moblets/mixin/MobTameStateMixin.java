@@ -117,6 +117,19 @@ public abstract class MobTameStateMixin
             UUID ownerUuid
     ) {
         this.moblets$ownerUuid = ownerUuid;
+
+        /*
+         * Ownership is the central definition of a tamed Moblet.
+         * Vanilla's persistence-required flag excludes the Moblet
+         * from ordinary distance-based despawning and is itself
+         * serialized by Mob. The flag is intentionally one-way:
+         * once tamed, a Moblet remains persistent even if another
+         * game mechanic later clears or transfers ownership.
+         */
+        if (ownerUuid != null) {
+            ((Mob) (Object) this)
+                    .setPersistenceRequired();
+        }
     }
 
     @Override
@@ -1335,16 +1348,22 @@ public abstract class MobTameStateMixin
                         ""
                 );
 
-        if (value.isBlank()) {
-            this.moblets$ownerUuid = null;
-        } else {
+        UUID ownerUuid = null;
+
+        if (!value.isBlank()) {
             try {
-                this.moblets$ownerUuid =
-                        UUID.fromString(value);
+                ownerUuid = UUID.fromString(value);
             } catch (IllegalArgumentException ignored) {
-                this.moblets$ownerUuid = null;
+                // Invalid legacy data is treated as untamed.
             }
         }
+
+        /*
+         * Go through the shared setter so old saves whose tamed
+         * Moblets predate the vanilla persistence flag repair
+         * themselves as soon as the entity is loaded.
+         */
+        this.moblets$setOwnerUuid(ownerUuid);
 
         this.moblets$orderedToStay =
                 input.getBooleanOr(
