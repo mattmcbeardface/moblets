@@ -1,5 +1,7 @@
 package com.moblets;
 
+import com.moblets.taming.MobletTameState;
+
 import java.util.EnumSet;
 import java.util.List;
 
@@ -37,6 +39,11 @@ public final class BabySkeletonWolfCuriosityGoal extends Goal {
 
     @Override
     public boolean canUse() {
+        if (((MobletTameState) this.skeleton)
+                .moblets$isTamed()) {
+            return false;
+        }
+
         if (!BabySkeletons.isBaby(this.skeleton)
                 || BabySkeletons.hasLearnedWolfLesson(
                         this.skeleton
@@ -64,6 +71,11 @@ public final class BabySkeletonWolfCuriosityGoal extends Goal {
 
     @Override
     public boolean canContinueToUse() {
+        if (((MobletTameState) this.skeleton)
+                .moblets$isTamed()) {
+            return false;
+        }
+
         if (!BabySkeletons.isBaby(this.skeleton)
                 || BabySkeletons.hasLearnedWolfLesson(
                         this.skeleton

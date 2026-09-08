@@ -1,6 +1,7 @@
 package com.moblets;
 
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -8,8 +9,6 @@ import net.minecraft.world.entity.monster.skeleton.AbstractSkeleton;
 import net.minecraft.world.entity.monster.skeleton.WitherSkeleton;
 
 public final class BabySkeletons {
-    static final float NATURAL_BABY_CHANCE = 0.08F;
-
     private static final Identifier BABY_SCALE_ID =
             Identifier.fromNamespaceAndPath(Moblets.MOD_ID, "baby_skeleton_scale");
 
@@ -18,6 +17,9 @@ public final class BabySkeletons {
 
     private static final Identifier BABY_WITHER_DAMAGE_ID =
             Identifier.fromNamespaceAndPath(Moblets.MOD_ID, "baby_wither_skeleton_damage");
+
+    private static final Identifier TAMED_HEALTH_ID =
+            Identifier.fromNamespaceAndPath(Moblets.MOD_ID, "tamed_skeleton_health");
 
     private static final Identifier WOLF_LESSON_ID =
             Identifier.fromNamespaceAndPath(Moblets.MOD_ID, "baby_skeleton_wolf_lesson");
@@ -70,14 +72,106 @@ public final class BabySkeletons {
             speed.addOrReplacePermanentModifier(BABY_SPEED);
         }
 
-        // Wither Skeletons are primarily melee mobs, so give them
-        // the same 50% offensive reduction as the ranged skeleton family.
+        // Wither Skeleton damage is attribute-based rather than projectile-based.
         if (skeleton instanceof WitherSkeleton) {
             AttributeInstance damage = skeleton.getAttribute(Attributes.ATTACK_DAMAGE);
             if (damage != null) {
                 damage.addOrReplacePermanentModifier(BABY_WITHER_DAMAGE);
             }
         }
+    }
+
+    public static void applyTamedStats(
+            AbstractSkeleton skeleton
+    ) {
+        if (!isBaby(skeleton)) {
+            return;
+        }
+
+        /*
+         * Companion health is intentionally defined as an
+         * explicit target rather than a percentage of each
+         * vanilla mob's base health.
+         *
+         * Skeleton:                 30 HP
+         * Stray / Bogged / Parched: 35 HP
+         * Wither Skeleton:          40 HP
+         */
+        double targetHealth;
+
+        if (skeleton.getType() == EntityType.SKELETON) {
+            targetHealth = 30.0D;
+        } else if (skeleton.getType() == EntityType.STRAY
+                || skeleton.getType() == EntityType.BOGGED
+                || skeleton.getType() == EntityType.PARCHED) {
+            targetHealth = 35.0D;
+        } else if (skeleton.getType()
+                == EntityType.WITHER_SKELETON) {
+            targetHealth = 40.0D;
+        } else {
+            return;
+        }
+
+        AttributeInstance health =
+                skeleton.getAttribute(
+                        Attributes.MAX_HEALTH
+                );
+
+        if (health == null) {
+            return;
+        }
+
+        /*
+         * ADD_VALUE lets us compensate for the different vanilla
+         * base-health values while keeping one persistent modifier
+         * ID. addOrReplace also migrates the old +25% modifier when
+         * this method is applied.
+         */
+        double bonus =
+                targetHealth - health.getBaseValue();
+
+        health.addOrReplacePermanentModifier(
+                new AttributeModifier(
+                        TAMED_HEALTH_ID,
+                        bonus,
+                        AttributeModifier.Operation.ADD_VALUE
+                )
+        );
+
+        /*
+         * A newly tamed companion starts at full health.
+         */
+        skeleton.setHealth(
+                skeleton.getMaxHealth()
+        );
+
+        /*
+         * Wild baby Wither Skeletons deal 50% of the adult
+         * attack damage. Taming turns the Wither into our melee
+         * specialist, so restore the vanilla adult attack
+         * attribute while retaining its baby scale/speed.
+         */
+        if (skeleton instanceof WitherSkeleton) {
+            AttributeInstance damage =
+                    skeleton.getAttribute(
+                            Attributes.ATTACK_DAMAGE
+                    );
+
+            if (damage != null) {
+                damage.removeModifier(
+                        BABY_WITHER_DAMAGE_ID
+                );
+            }
+        }
+    }
+
+    public static boolean isRangedFamily(
+            AbstractSkeleton skeleton
+    ) {
+        return skeleton.getType() == EntityType.SKELETON
+                || skeleton.getType() == EntityType.STRAY
+                || skeleton.getType() == EntityType.BOGGED
+                || skeleton.getType() == EntityType.PARCHED;
     }
 
     public static boolean isBaby(AbstractSkeleton skeleton) {

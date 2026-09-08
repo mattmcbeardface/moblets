@@ -7,13 +7,14 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Witch;
 
 public final class BabyWitches {
-    static final float NATURAL_BABY_CHANCE = 0.08F;
-
     private static final Identifier BABY_SCALE_ID =
             Identifier.fromNamespaceAndPath(Moblets.MOD_ID, "baby_witch_scale");
 
     private static final Identifier BABY_SPEED_ID =
             Identifier.fromNamespaceAndPath(Moblets.MOD_ID, "baby_witch_speed");
+
+    private static final Identifier TAMED_HEALTH_ID =
+            Identifier.fromNamespaceAndPath(Moblets.MOD_ID, "tamed_witch_health");
 
     private static final AttributeModifier BABY_SCALE =
             new AttributeModifier(
@@ -42,6 +43,38 @@ public final class BabyWitches {
         if (speed != null) {
             speed.addOrReplacePermanentModifier(BABY_SPEED);
         }
+    }
+
+    public static void applyTamedStats(Witch witch) {
+        if (!isBaby(witch)) {
+            return;
+        }
+
+        AttributeInstance health =
+                witch.getAttribute(
+                        Attributes.MAX_HEALTH
+                );
+
+        if (health == null) {
+            return;
+        }
+
+        double targetHealth = 35.0D;
+
+        double bonus =
+                targetHealth - health.getBaseValue();
+
+        health.addOrReplacePermanentModifier(
+                new AttributeModifier(
+                        TAMED_HEALTH_ID,
+                        bonus,
+                        AttributeModifier.Operation.ADD_VALUE
+                )
+        );
+
+        witch.setHealth(
+                witch.getMaxHealth()
+        );
     }
 
     public static boolean isBaby(Witch witch) {

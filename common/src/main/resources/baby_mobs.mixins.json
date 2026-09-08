@@ -9,6 +9,7 @@
     "CreeperAccessor",
     "ServerExplosionMixin",
     "WitchMixin",
+    "WitchMerchantMixin",
     "ThrownSplashPotionMixin",
     "PillagerMixin",
     "AbstractArrowMixin",
@@ -18,7 +19,10 @@
     "EndermanTakeBlockGoalMixin",
     "EndermanLeaveBlockGoalMixin",
     "WanderingTraderMixin",
-    "ItemEntityMixin"
+    "ItemEntityMixin",
+    "MobTameStateMixin",
+    "RangedBowAttackGoalMixin",
+    "RangedCrossbowAttackGoalMixin"
   ],
   "injectors": {
     "defaultRequire": 1

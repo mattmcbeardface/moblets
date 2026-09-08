@@ -1,5 +1,8 @@
 package com.moblets;
 
+import com.moblets.config.MobletsConfig;
+import com.moblets.registry.EncounterRegistry;
+
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.entity.Entity;
 import java.util.Collections;
@@ -113,6 +116,12 @@ public final class BabySnowGolems {
              */
             if (isBaby(adult)) {
                 WATCHED_ADULTS.remove(adult);
+                continue;
+            }
+
+            if (!MobletsConfig.encounterEnabled(
+                    EncounterRegistry.SNOW_GOLEM_COMPANION
+            )) {
                 continue;
             }
 

@@ -1,5 +1,8 @@
 package com.moblets;
 
+import com.moblets.config.MobletsConfig;
+import com.moblets.registry.EncounterRegistry;
+
 import net.minecraft.server.MinecraftServer;
 import java.util.Collections;
 import java.util.IdentityHashMap;
@@ -17,8 +20,6 @@ import net.minecraft.world.entity.monster.zombie.Husk;
 import net.minecraft.world.entity.monster.skeleton.AbstractSkeleton;
 
 public final class BabyCamelHusks {
-    static final float NATURAL_BABY_CHANCE = 0.08F;
-
     private static final Identifier BABY_SCALE_ID =
             Identifier.fromNamespaceAndPath(
                     Moblets.MOD_ID,
@@ -92,7 +93,11 @@ public final class BabyCamelHusks {
         /*
          * In case passengers are already present when this method runs.
          */
-        applyBabyToPassengers(camelHusk);
+        if (MobletsConfig.encounterEnabled(
+                EncounterRegistry.CAMEL_HUSK_RIDERS
+        )) {
+            applyBabyToPassengers(camelHusk);
+        }
     }
 
     public static boolean isBaby(CamelHusk camelHusk) {
@@ -122,7 +127,11 @@ public final class BabyCamelHusks {
                 continue;
             }
 
-            applyBabyToPassengers(camelHusk);
+            if (MobletsConfig.encounterEnabled(
+                    EncounterRegistry.CAMEL_HUSK_RIDERS
+            )) {
+                applyBabyToPassengers(camelHusk);
+            }
         }
     }
 

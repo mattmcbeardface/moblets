@@ -24,25 +24,19 @@ public abstract class SkeletonModelMixin {
         boolean baby =
                 ((BabyVariantRenderState) state).babyMobs$isBabyVariant();
 
-        //
         // Oversized skull.
-        //
         float headScale = baby ? 1.25F : 1.0F;
 
         model.head.xScale = headScale;
         model.head.yScale = headScale;
         model.head.zScale = headScale;
 
-        //
         // Slightly broader/deeper ribcage.
-        //
         model.body.xScale = baby ? 1.10F : 1.0F;
         model.body.yScale = 1.0F;
         model.body.zScale = baby ? 1.15F : 1.0F;
 
-        //
         // Shorter arms, normal thickness.
-        //
         model.rightArm.xScale = 1.0F;
         model.rightArm.yScale = baby ? 0.90F : 1.0F;
         model.rightArm.zScale = 1.0F;
@@ -51,9 +45,7 @@ public abstract class SkeletonModelMixin {
         model.leftArm.yScale = baby ? 0.90F : 1.0F;
         model.leftArm.zScale = 1.0F;
 
-        //
         // Shorter legs, normal thickness.
-        //
         model.rightLeg.xScale = 1.0F;
         model.rightLeg.yScale = baby ? 0.90F : 1.0F;
         model.rightLeg.zScale = 1.0F;

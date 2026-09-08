@@ -1,5 +1,8 @@
 package com.moblets;
 
+import com.moblets.config.MobletsConfig;
+import com.moblets.registry.EncounterRegistry;
+
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.entity.Entity;
 import java.util.Collections;
@@ -136,6 +139,12 @@ public final class BabyWanderingTraders {
              * therefore left alone.
              */
             if (adult.getDespawnDelay() <= 0) {
+                continue;
+            }
+
+            if (!MobletsConfig.encounterEnabled(
+                    EncounterRegistry.WANDERING_TRADER_CARAVAN
+            )) {
                 continue;
             }
 
