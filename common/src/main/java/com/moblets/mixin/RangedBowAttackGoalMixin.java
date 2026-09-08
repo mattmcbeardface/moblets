@@ -8,18 +8,37 @@ import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.ai.goal.RangedBowAttackGoal;
 import net.minecraft.world.entity.monster.Monster;
 
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(RangedBowAttackGoal.class)
 public abstract class RangedBowAttackGoalMixin {
-    @Shadow
-    @Final
-    private Monster mob;
+    /*
+     * Forge-family patches widen the backing mob field from
+     * Monster to Mob, while Fabric retains Monster. Capturing
+     * the shared constructor argument avoids a loader-specific
+     * shadow descriptor without changing combat behavior.
+     */
+    @Unique
+    private Monster moblets$mob;
+
+    @Inject(
+            method = "<init>(Lnet/minecraft/world/entity/monster/Monster;DIF)V",
+            at = @At("RETURN")
+    )
+    private void moblets$captureMob(
+            Monster mob,
+            double speedModifier,
+            int attackInterval,
+            float attackRadius,
+            CallbackInfo ci
+    ) {
+        this.moblets$mob = mob;
+    }
 
     /*
      * Vanilla bow AI tries to path directly toward its target
@@ -103,7 +122,7 @@ public abstract class RangedBowAttackGoalMixin {
 
     @Unique
     private boolean moblets$isSentry() {
-        if (!(this.mob instanceof MobletTameState state)) {
+        if (!(this.moblets$mob instanceof MobletTameState state)) {
             return false;
         }
 

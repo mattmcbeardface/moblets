@@ -13,9 +13,7 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.illager.Pillager;
 import net.minecraft.world.entity.player.Player;
 
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -45,9 +43,13 @@ public abstract class RangedCrossbowAttackGoalMixin {
     private static final int MOBLETS_STRAFE_DIRECTION_INTERVAL =
             20;
 
-    @Shadow
-    @Final
-    private Monster mob;
+    /*
+     * NeoForge widens the backing mob field from Monster to
+     * Mob. Capture the constructor argument shared by every
+     * loader instead of shadowing a loader-specific descriptor.
+     */
+    @Unique
+    private Monster moblets$mob;
 
     @Unique
     private boolean moblets$followEvading;
@@ -57,6 +59,19 @@ public abstract class RangedCrossbowAttackGoalMixin {
 
     @Unique
     private int moblets$strafeDirectionTicks;
+
+    @Inject(
+            method = "<init>(Lnet/minecraft/world/entity/monster/Monster;DF)V",
+            at = @At("RETURN")
+    )
+    private void moblets$captureMob(
+            Monster mob,
+            double speedModifier,
+            float attackRadius,
+            CallbackInfo ci
+    ) {
+        this.moblets$mob = mob;
+    }
 
     @Redirect(
             method = "tick",
@@ -123,9 +138,9 @@ public abstract class RangedCrossbowAttackGoalMixin {
 
     @Unique
     private boolean moblets$tryFollowEvasion() {
-        if (!(this.mob instanceof Pillager pillager)
+        if (!(this.moblets$mob instanceof Pillager pillager)
                 || !BabyPillagers.isBaby(pillager)
-                || !(this.mob instanceof MobletTameState state)
+                || !(this.moblets$mob instanceof MobletTameState state)
                 || !state.moblets$isTamed()
                 || state.moblets$isOrderedToStay()) {
 
@@ -134,7 +149,7 @@ public abstract class RangedCrossbowAttackGoalMixin {
         }
 
         LivingEntity target =
-                this.mob.getTarget();
+                this.moblets$mob.getTarget();
 
         if (target == null
                 || !target.isAlive()
@@ -147,7 +162,7 @@ public abstract class RangedCrossbowAttackGoalMixin {
         boolean sameVerticalBand =
                 Math.abs(
                         target.getY()
-                                - this.mob.getY()
+                                - this.moblets$mob.getY()
                 ) <= MOBLETS_EVADE_VERTICAL_RANGE;
 
         if (!sameVerticalBand) {
@@ -156,7 +171,7 @@ public abstract class RangedCrossbowAttackGoalMixin {
         }
 
         double distanceSqr =
-                this.mob.distanceToSqr(target);
+                this.moblets$mob.distanceToSqr(target);
 
         if (!this.moblets$followEvading
                 && distanceSqr
@@ -164,7 +179,7 @@ public abstract class RangedCrossbowAttackGoalMixin {
 
             this.moblets$followEvading = true;
             this.moblets$strafeClockwise =
-                    this.mob.getRandom().nextBoolean();
+                    this.moblets$mob.getRandom().nextBoolean();
 
             this.moblets$strafeDirectionTicks = 0;
         }
@@ -188,7 +203,7 @@ public abstract class RangedCrossbowAttackGoalMixin {
 
             this.moblets$strafeDirectionTicks = 0;
 
-            if (this.mob.getRandom()
+            if (this.moblets$mob.getRandom()
                     .nextFloat() < 0.30F) {
 
                 this.moblets$strafeClockwise =
@@ -199,7 +214,7 @@ public abstract class RangedCrossbowAttackGoalMixin {
         Player owner =
                 state.moblets$getOwnerUuid() == null
                         ? null
-                        : this.mob.level()
+                        : this.moblets$mob.level()
                                 .getPlayerByUUID(
                                         state.moblets$getOwnerUuid()
                                 );
@@ -213,7 +228,7 @@ public abstract class RangedCrossbowAttackGoalMixin {
                 owner.blockPosition();
 
         if (MobletSentryMovement.tryEvasionStep(
-                this.mob,
+                this.moblets$mob,
                 ownerAnchor,
                 target,
                 this.moblets$strafeClockwise,
@@ -223,7 +238,7 @@ public abstract class RangedCrossbowAttackGoalMixin {
         }
 
         if (MobletSentryMovement.tryEvasionStep(
-                this.mob,
+                this.moblets$mob,
                 ownerAnchor,
                 target,
                 !this.moblets$strafeClockwise,
@@ -250,7 +265,7 @@ public abstract class RangedCrossbowAttackGoalMixin {
 
     @Unique
     private boolean moblets$isSentry() {
-        if (!(this.mob instanceof MobletTameState state)) {
+        if (!(this.moblets$mob instanceof MobletTameState state)) {
             return false;
         }
 
