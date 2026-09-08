@@ -9,6 +9,7 @@
     "CreeperAccessor",
     "ServerExplosionMixin",
     "WitchMixin",
+    "WitchMerchantMixin",
     "ThrownSplashPotionMixin",
     "PillagerMixin",
     "AbstractArrowMixin",

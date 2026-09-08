@@ -12,6 +12,7 @@
     "AbstractSkeletonRendererMixin",
     "SkeletonModelMixin",
     "WitchRendererMixin",
+    "MerchantScreenMixin",
     "WitchModelMixin",
     "IllagerRendererMixin",
     "IllagerModelMixin",

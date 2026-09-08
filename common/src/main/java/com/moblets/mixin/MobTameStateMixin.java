@@ -7,8 +7,10 @@ import net.minecraft.core.BlockPos;
 import com.moblets.BabySkeletons;
 import com.moblets.BabyCreepers;
 import com.moblets.BabyPillagers;
+import com.moblets.BabyWitches;
 import com.moblets.taming.MobletTameState;
 import com.moblets.taming.MobletTaming;
+import com.moblets.taming.MobletWitchMerchant;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.tags.ItemTags;
@@ -19,6 +21,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.skeleton.AbstractSkeleton;
 import net.minecraft.world.entity.monster.Creeper;
+import net.minecraft.world.entity.monster.Witch;
 import net.minecraft.world.entity.monster.illager.Pillager;
 import net.minecraft.world.entity.monster.skeleton.WitherSkeleton;
 import net.minecraft.world.entity.player.Player;
@@ -64,6 +67,10 @@ public abstract class MobTameStateMixin
     @Unique
     private static final String MOBLETS_STAY_ANCHOR_Z_KEY =
             "MobletsStayAnchorZ";
+
+    @Unique
+    private static final String MOBLETS_WITCH_TRADE_XP_KEY =
+            "MobletsWitchTradeXp";
 
     @Unique
     private static final double MOBLETS_STAY_ENGAGEMENT_RADIUS =
@@ -201,6 +208,37 @@ public abstract class MobTameStateMixin
                         : anchor.immutable();
     }
 
+
+    /*
+     * Tamed Witches are noncombatants.
+     *
+     * Block every attempt to assign them a combat target.
+     * Their flee behavior reads getLastHurtByMob() directly,
+     * so it does not require a target.
+     */
+    @Inject(
+            method = "setTarget",
+            at = @At("HEAD"),
+            cancellable = true
+    )
+    private void moblets$preventTamedWitchTarget(
+            LivingEntity target,
+            CallbackInfo ci
+    ) {
+        Mob mob =
+                (Mob) (Object) this;
+
+        if (target != null
+                && mob instanceof Witch witch
+                && BabyWitches.isBaby(witch)
+                && ((MobletTameState) witch)
+                        .moblets$isTamed()) {
+
+            ci.cancel();
+        }
+    }
+
+
     @Inject(
             method = "interact",
             at = @At("HEAD"),
@@ -240,6 +278,11 @@ public abstract class MobTameStateMixin
                                 && BabyPillagers.isBaby(pillager)
                                 && player.getItemInHand(hand)
                                         .is(Items.GOLD_NUGGET)
+                        ||
+                        mob instanceof Witch witch
+                                && BabyWitches.isBaby(witch)
+                                && player.getItemInHand(hand)
+                                        .is(Items.REDSTONE)
                 )) {
 
             /*
@@ -331,6 +374,40 @@ public abstract class MobTameStateMixin
                                     + " HP"
                     )
             );
+
+            cir.setReturnValue(
+                    InteractionResult.SUCCESS_SERVER
+            );
+            return;
+        }
+
+        /*
+         * Public Witch potion shop.
+         *
+         * Once a baby Witch is tamed, ANY player may present
+         * a Fermented Spider Eye to open her merchant screen.
+         *
+         * Ownership still controls healing and Follow/Stay;
+         * commerce is deliberately public.
+         */
+        if (hand == InteractionHand.MAIN_HAND
+                && mob instanceof Witch witch
+                && BabyWitches.isBaby(witch)
+                && this.moblets$isTamed()
+                && player.getItemInHand(hand)
+                        .is(Items.FERMENTED_SPIDER_EYE)) {
+
+            if (mob.level().isClientSide()) {
+                cir.setReturnValue(
+                        InteractionResult.SUCCESS
+                );
+                return;
+            }
+
+            ((MobletWitchMerchant) witch)
+                    .moblets$openWitchShop(
+                            player
+                    );
 
             cir.setReturnValue(
                     InteractionResult.SUCCESS_SERVER
@@ -975,6 +1052,9 @@ public abstract class MobTameStateMixin
                         ||
                         mob instanceof Pillager pillager
                                 && BabyPillagers.isBaby(pillager)
+                        ||
+                        mob instanceof Witch witch
+                                && BabyWitches.isBaby(witch)
                 )) {
 
             /*
@@ -1231,6 +1311,25 @@ public abstract class MobTameStateMixin
                         this.moblets$stayAnchor.getZ()
                 );
             }
+
+            /*
+             * Witch merchant progression belongs to the same
+             * persistent Mob data as ownership/Stay state.
+             *
+             * Witch itself does not declare the save method,
+             * so persistence must happen here on Mob.
+             */
+            Mob mob =
+                    (Mob) (Object) this;
+
+            if (mob instanceof Witch
+                    && mob instanceof MobletWitchMerchant merchant) {
+
+                output.putInt(
+                        MOBLETS_WITCH_TRADE_XP_KEY,
+                        merchant.getVillagerXp()
+                );
+            }
         }
     }
 
@@ -1288,6 +1387,26 @@ public abstract class MobTameStateMixin
                     );
         } else {
             this.moblets$stayAnchor = null;
+        }
+
+        /*
+         * Restore persistent Witch merchant progression.
+         */
+        Mob mob =
+                (Mob) (Object) this;
+
+        if (mob instanceof Witch
+                && mob instanceof MobletWitchMerchant merchant) {
+
+            merchant.overrideXp(
+                    Math.max(
+                            0,
+                            input.getIntOr(
+                                    MOBLETS_WITCH_TRADE_XP_KEY,
+                                    0
+                            )
+                    )
+            );
         }
 
         /*

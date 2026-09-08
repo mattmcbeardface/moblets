@@ -3,6 +3,7 @@ package com.moblets.taming;
 import com.moblets.BabyCreepers;
 import com.moblets.BabyPillagers;
 import com.moblets.BabySkeletons;
+import com.moblets.BabyWitches;
 
 import com.moblets.config.MobletsConfig;
 import com.moblets.registry.MobletDefinition;
@@ -14,6 +15,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.monster.skeleton.AbstractSkeleton;
 import net.minecraft.world.entity.monster.Creeper;
+import net.minecraft.world.entity.monster.Witch;
 import net.minecraft.world.entity.monster.illager.Pillager;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
@@ -199,6 +201,12 @@ public final class MobletTaming {
 
                 BabyPillagers.applyTamedStats(
                         pillager
+                );
+            } else if (mob instanceof Witch witch
+                    && BabyWitches.isBaby(witch)) {
+
+                BabyWitches.applyTamedStats(
+                        witch
                 );
             }
 

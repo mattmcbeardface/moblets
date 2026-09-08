@@ -2,6 +2,7 @@ package com.moblets.taming;
 
 import com.moblets.BabyCreepers;
 import com.moblets.BabyPillagers;
+import com.moblets.BabyWitches;
 import java.util.IdentityHashMap;
 import java.util.Map;
 
@@ -13,6 +14,7 @@ import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.skeleton.AbstractSkeleton;
 import net.minecraft.world.entity.monster.Creeper;
+import net.minecraft.world.entity.monster.Witch;
 import net.minecraft.world.entity.monster.illager.Pillager;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionContents;
@@ -92,6 +94,18 @@ public final class MobletTamingRegistry {
                                 && BabyPillagers.isBaby(pillager),
                         stack -> stack.is(Items.GOLD_INGOT),
                         0.33F
+                )
+        );
+
+        register(
+                EntityTypes.WITCH,
+                new MobletTamingRule(
+                        mob -> mob instanceof Witch witch
+                                && BabyWitches.isBaby(witch),
+                        stack -> stack.is(
+                                Items.FERMENTED_SPIDER_EYE
+                        ),
+                        0.25F
                 )
         );
 
