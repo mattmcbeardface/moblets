@@ -53,9 +53,7 @@ public final class MobletOwnerHurtByTargetGoal extends Goal {
 
     @Override
     public boolean canContinueToUse() {
-        return this.target != null
-                && this.target.isAlive()
-                && !(this.target instanceof Player)
+        return validTarget(this.target)
                 && this.mob.getTarget() == this.target;
     }
 
@@ -79,7 +77,9 @@ public final class MobletOwnerHurtByTargetGoal extends Goal {
         return candidate != null
                 && candidate.isAlive()
                 && candidate != this.mob
-                && !(candidate instanceof Player);
+                && !(candidate instanceof Player)
+                && (!(candidate instanceof MobletTameState state)
+                        || !state.moblets$isTamed());
     }
 
     private Player findOwner(

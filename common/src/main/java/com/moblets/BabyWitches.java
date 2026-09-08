@@ -7,8 +7,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Witch;
 
 public final class BabyWitches {
-    static final float NATURAL_BABY_CHANCE = 0.08F;
-
     private static final Identifier BABY_SCALE_ID =
             Identifier.fromNamespaceAndPath(Moblets.MOD_ID, "baby_witch_scale");
 

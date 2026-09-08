@@ -171,7 +171,6 @@ public final class MobletRegistry {
                             )
                     )
                     .randomSpawn(DEFAULT_RANDOM_SPAWN_CHANCE)
-                    .tameable()
                     .advanced(
                             HEALTH,
                             DAMAGE,
@@ -210,7 +209,6 @@ public final class MobletRegistry {
                             )
                     )
                     .randomSpawn(DEFAULT_RANDOM_SPAWN_CHANCE)
-                    .tameable()
                     .advanced(
                             HEALTH,
                             DAMAGE,

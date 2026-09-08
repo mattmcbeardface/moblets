@@ -48,11 +48,6 @@ public final class MobletSkeletonSentryGoal extends Goal {
             168.75D;
 
     /*
-     * Pillagers use tighter spacing than Skeleton sentries.
-     * They have no armor, but should not flee so far that they
-     * abandon their assigned defensive position.
-     */
-    /*
      * Pillager crossbow AI only begins charging within its
      * eight-block attack radius, so Stay-mode evasion must
      * remain comfortably inside that envelope.

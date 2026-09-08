@@ -370,16 +370,7 @@ public abstract class WitchMerchantMixin
         Witch witch =
                 (Witch) (Object) this;
 
-        /*
-         * Use the Witch's normal ambient laugh rather than a
-         * villager rank-up sound.
-         */
-        /*
-         * Promotion cackle.
-         *
-         * Use the Witch celebration vocalization and explicitly
-         * pitch it up to the baby-Moblet voice range.
-         */
+        // playSound does not pass through Witch#getVoicePitch.
         witch.playSound(
                 SoundEvents.WITCH_CELEBRATE,
                 1.0F,

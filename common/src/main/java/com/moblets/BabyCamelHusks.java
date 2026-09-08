@@ -20,8 +20,6 @@ import net.minecraft.world.entity.monster.zombie.Husk;
 import net.minecraft.world.entity.monster.skeleton.AbstractSkeleton;
 
 public final class BabyCamelHusks {
-    static final float NATURAL_BABY_CHANCE = 0.08F;
-
     private static final Identifier BABY_SCALE_ID =
             Identifier.fromNamespaceAndPath(
                     Moblets.MOD_ID,

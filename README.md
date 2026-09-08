@@ -79,6 +79,27 @@ Examples include:
 
 Existing vanilla baby mobs such as Zombie Villagers, Drowned, and Husks are not replaced by Moblets.
 
+## Tamed Companions
+
+Baby Skeletons, Strays, Bogged, Parched, Wither Skeletons, Creepers, Pillagers, and Witches can be tamed. Each variant has its own taming item and chance:
+
+| Moblet | Taming item | Chance |
+| --- | --- | ---: |
+| Skeleton | String | 25% |
+| Stray | Rabbit Hide | 40% |
+| Bogged | Red or Brown Mushroom | 25% |
+| Parched | Water Potion | 50% |
+| Wither Skeleton | Nether Wart | 20% |
+| Creeper | Firework Rocket | 25% |
+| Pillager | Gold Ingot | 33% |
+| Witch | Fermented Spider Eye | 25% |
+
+Owners can switch companions between Follow and Stay modes. Ownership, Stay mode, and Stay anchors persist across world saves. Tamed companions avoid targeting players and other tamed Moblets, recover slowly while out of combat, and can be healed by their owners.
+
+Skeleton-family companions support owner-managed armor and specialized weapons: bows for ranged Skeleton variants and swords for Wither Skeletons. Creepers accept helmets, use controlled hostile-only explosions without terrain damage, and survive their own blasts. Pillagers use crossbows.
+
+Tamed Witches are noncombatant support companions. In Follow mode they flee hostile attackers and throw Strong Healing splash potions at an owner below half health. In Stay mode they wander near their anchor and trade deterministic potion offers with any player. Witch ranks are Hedge Witch, Cauldron Keeper, Hexbinder, Coven Elder, and High Witch.
+
 ## Commands
 
 Moblets includes summon commands for testing and administration:
@@ -137,6 +158,14 @@ Java:
 For multiplayer, install Moblets on the server and participating clients.
 
 Fabric installations also require Fabric API.
+
+## Installation
+
+Install the supported loader for your Minecraft version, then place the matching Moblets JAR in the instance or server `mods` directory. Fabric installations must also include Fabric API. Use the same Moblets version and loader family on the server and participating clients.
+
+## Configuration
+
+Moblets creates `config/moblets.json` on first launch. The file controls natural spawn chances, whether supported companion types can be tamed, and whether special encounters are enabled. Stop the game or server before editing the file.
 
 ## Resource Packs
 

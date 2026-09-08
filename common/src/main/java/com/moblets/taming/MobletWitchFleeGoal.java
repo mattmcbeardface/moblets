@@ -311,9 +311,6 @@ public final class MobletWitchFleeGoal
             return false;
         }
 
-        /*
-         * Never flee from another tamed hostile-derived Moblet.
-         */
         if (mob instanceof MobletTameState state
                 && state.moblets$isTamed()) {
 

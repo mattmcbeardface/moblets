@@ -9,8 +9,6 @@ import net.minecraft.world.entity.monster.skeleton.AbstractSkeleton;
 import net.minecraft.world.entity.monster.skeleton.WitherSkeleton;
 
 public final class BabySkeletons {
-    static final float NATURAL_BABY_CHANCE = 0.08F;
-
     private static final Identifier BABY_SCALE_ID =
             Identifier.fromNamespaceAndPath(Moblets.MOD_ID, "baby_skeleton_scale");
 
@@ -74,8 +72,7 @@ public final class BabySkeletons {
             speed.addOrReplacePermanentModifier(BABY_SPEED);
         }
 
-        // Wither Skeletons are primarily melee mobs, so give them
-        // the same 50% offensive reduction as the ranged skeleton family.
+        // Wither Skeleton damage is attribute-based rather than projectile-based.
         if (skeleton instanceof WitherSkeleton) {
             AttributeInstance damage = skeleton.getAttribute(Attributes.ATTACK_DAMAGE);
             if (damage != null) {

@@ -8,8 +8,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Creeper;
 
 public final class BabyCreepers {
-    static final float NATURAL_BABY_CHANCE = 0.08F;
-
     private static final int BABY_EXPLOSION_RADIUS = 2;
 
     private static final Identifier BABY_SCALE_ID =

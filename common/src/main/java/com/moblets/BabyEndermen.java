@@ -8,8 +8,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.EnderMan;
 
 public final class BabyEndermen {
-    static final float NATURAL_BABY_CHANCE = 0.08F;
-
     private static final Identifier BABY_SCALE_ID =
             Identifier.fromNamespaceAndPath(Moblets.MOD_ID, "baby_enderman_scale");
 

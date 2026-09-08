@@ -16,11 +16,8 @@ import java.util.UUID;
 import com.moblets.taming.MobletWitchMerchant;
 import com.moblets.taming.MobletCuriosityGoal;
 import com.moblets.taming.MobletFollowOwnerGoal;
-import com.moblets.taming.MobletOwnerHurtByTargetGoal;
-import com.moblets.taming.MobletOwnerHurtTargetGoal;
 import com.moblets.taming.MobletWitchStayWanderGoal;
 import com.moblets.taming.MobletWitchTradeAttentionGoal;
-import com.moblets.taming.MobletTamedTargetGuardGoal;
 
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.entity.EntityType;
@@ -281,42 +278,6 @@ public abstract class WitchMixin
         Witch witch =
                 (Witch) (Object) this;
 
-        /*
-         * Owner-directed reactive combat.
-         */
-        this.targetSelector.addGoal(
-                0,
-                new MobletOwnerHurtByTargetGoal(
-                        witch
-                )
-        );
-
-        this.targetSelector.addGoal(
-                1,
-                new MobletOwnerHurtTargetGoal(
-                        witch
-                )
-        );
-
-        /*
-         * Once tamed, suppress the Witch's ordinary hostile
-         * target selection.
-         */
-        this.targetSelector.addGoal(
-                2,
-                new MobletTamedTargetGuardGoal(
-                        witch
-                )
-        );
-
-        /*
-         * Stay is currently positioning only.
-         * Proactive sentry combat comes in the next pass.
-         */
-        /*
-         * An active customer takes absolute movement/look
-         * priority over every normal Witch behavior.
-         */
         this.goalSelector.addGoal(
                 0,
                 new MobletWitchFleeGoal(
@@ -358,13 +319,6 @@ public abstract class WitchMixin
                 )
         );
     }
-
-    /*
-     * Wild baby Witch accuracy remains intentionally poor.
-     *
-     * Tamed accuracy will be replaced with companion combat
-     * tuning when the Witch combat goal is added.
-     */
 
     /*
      * Tamed baby Witches are pure support companions.

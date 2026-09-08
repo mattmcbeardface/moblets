@@ -254,13 +254,8 @@ public abstract class MobTameStateMixin
                 (Mob) (Object) this;
 
         /*
-         * Owner healing / health inspection for Moblet companions.
-         *
-         * Normal right-click with a bone:
-         *   heals 4 HP and consumes one bone in Survival.
-         *
-         * Sneak + right-click with a bone:
-         *   reports health without healing or consuming.
+         * Each companion has a dedicated healing item. Sneaking reports
+         * health without consuming the item; otherwise it restores 4 HP.
          */
         if (hand == InteractionHand.MAIN_HAND
                 && (
@@ -310,10 +305,6 @@ public abstract class MobTameStateMixin
             float maxHealth =
                     mob.getMaxHealth();
 
-            /*
-             * Sneaking with a bone is the non-destructive health
-             * inspection action.
-             */
             if (player.isShiftKeyDown()) {
                 player.sendOverlayMessage(
                         Component.literal(
@@ -331,9 +322,6 @@ public abstract class MobTameStateMixin
                 return;
             }
 
-            /*
-             * Do not waste a bone when already at full health.
-             */
             if (health >= maxHealth) {
                 player.sendOverlayMessage(
                         Component.literal(
