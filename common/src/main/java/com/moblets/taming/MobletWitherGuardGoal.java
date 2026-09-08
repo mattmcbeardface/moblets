@@ -81,9 +81,19 @@ public final class MobletWitherGuardGoal extends Goal {
          * Vanilla melee AI already owns the actual pursuit and
          * attack once a valid target has been assigned.
          */
-        if (this.skeleton.getTarget() != null
-                && this.skeleton.getTarget().isAlive()) {
-            return;
+        var current =
+                this.skeleton.getTarget();
+
+        if (current != null
+                && current.isAlive()) {
+
+            if (current instanceof MobletTameState targetState
+                    && targetState.moblets$isTamed()) {
+
+                this.skeleton.setTarget(null);
+            } else {
+                return;
+            }
         }
 
         if (this.scanCooldown > 0) {

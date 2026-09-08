@@ -68,9 +68,19 @@ public final class MobletCreeperGuardGoal extends Goal {
             return;
         }
 
-        if (this.creeper.getTarget() != null
-                && this.creeper.getTarget().isAlive()) {
-            return;
+        var current =
+                this.creeper.getTarget();
+
+        if (current != null
+                && current.isAlive()) {
+
+            if (current instanceof MobletTameState targetState
+                    && targetState.moblets$isTamed()) {
+
+                this.creeper.setTarget(null);
+            } else {
+                return;
+            }
         }
 
         if (this.scanCooldown > 0) {

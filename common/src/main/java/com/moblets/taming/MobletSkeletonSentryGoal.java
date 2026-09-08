@@ -128,7 +128,9 @@ public final class MobletSkeletonSentryGoal extends Goal {
          */
         if (current != null
                 && current.isAlive()
-                && !(current instanceof Player)) {
+                && !(current instanceof Player)
+                && (!(current instanceof MobletTameState targetState)
+                        || !targetState.moblets$isTamed())) {
 
             handleCombatMovement(
                     anchor,
@@ -136,6 +138,16 @@ public final class MobletSkeletonSentryGoal extends Goal {
             );
 
             return;
+        }
+
+        /*
+         * A hostile Moblet may have been tamed after this sentry
+         * originally selected it. Drop that stale target immediately.
+         */
+        if (current instanceof MobletTameState targetState
+                && targetState.moblets$isTamed()) {
+
+            this.mob.setTarget(null);
         }
 
         resetEvasion();
