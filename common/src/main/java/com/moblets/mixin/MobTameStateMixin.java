@@ -127,8 +127,18 @@ public abstract class MobTameStateMixin
          * game mechanic later clears or transfers ownership.
          */
         if (ownerUuid != null) {
-            ((Mob) (Object) this)
-                    .setPersistenceRequired();
+            Mob mob =
+                    (Mob) (Object) this;
+
+            mob.setPersistenceRequired();
+
+            /*
+             * Companions must be able to route through shallow
+             * water while following their owner or returning to
+             * a Stay anchor.
+             */
+            mob.getNavigation()
+                    .setCanFloat(true);
         }
     }
 
@@ -264,6 +274,36 @@ public abstract class MobTameStateMixin
                 && selfState.moblets$isTamed()) {
 
             ci.cancel();
+        }
+    }
+
+
+    /*
+     * Tamed Moblets need the same basic upward water movement
+     * that swimming mobs receive from vanilla FloatGoal.
+     *
+     * Navigation supplies the horizontal route toward shore;
+     * this supplies the vertical impulse needed to climb out.
+     */
+    @Inject(
+            method = "aiStep",
+            at = @At("TAIL")
+    )
+    private void moblets$swimWhenTamed(
+            CallbackInfo ci
+    ) {
+        Mob mob =
+                (Mob) (Object) this;
+
+        if (!this.moblets$isTamed()
+                || !mob.isInWater()) {
+            return;
+        }
+
+        if (mob.getRandom().nextFloat()
+                < 0.80F) {
+
+            mob.getJumpControl().jump();
         }
     }
 

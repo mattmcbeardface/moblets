@@ -25,6 +25,9 @@ public final class MobletSentryMovement {
     private static final double EVADE_PROBE_DISTANCE =
             1.25D;
 
+    private static final double EVADE_TERRAIN_SPEED =
+            1.15D;
+
     private static final int MAX_VERTICAL_OFFSET =
             2;
 
@@ -115,6 +118,24 @@ public final class MobletSentryMovement {
             boolean clockwise,
             double maxAnchorRadius
     ) {
+        /*
+         * A terrain-aware retreat may have started an actual
+         * navigation path to climb or descend one block.
+         *
+         * Do not replace that path with another strafe command on
+         * the next tick. Let vanilla navigation complete the step,
+         * including its normal jump handling.
+         */
+        if (!mob.getNavigation().isDone()) {
+            mob.lookAt(
+                    target,
+                    30.0F,
+                    30.0F
+            );
+
+            return true;
+        }
+
         double towardX =
                 target.getX() - mob.getX();
 
@@ -177,41 +198,66 @@ public final class MobletSentryMovement {
         moveX /= moveLength;
         moveZ /= moveLength;
 
-        BlockPos candidate =
-                new BlockPos(
-                        (int) Math.floor(
-                                mob.getX()
-                                        + moveX
-                                        * EVADE_PROBE_DISTANCE
-                        ),
-                        mob.blockPosition().getY(),
-                        (int) Math.floor(
-                                mob.getZ()
-                                        + moveZ
-                                        * EVADE_PROBE_DISTANCE
-                        )
+        int candidateX =
+                (int) Math.floor(
+                        mob.getX()
+                                + moveX
+                                * EVADE_PROBE_DISTANCE
                 );
 
-        if (!isSafeEvasionCandidate(
-                mob,
-                anchor,
-                candidate,
-                maxAnchorRadius)) {
+        int candidateZ =
+                (int) Math.floor(
+                        mob.getZ()
+                                + moveZ
+                                * EVADE_PROBE_DISTANCE
+                );
+
+        BlockPos candidate =
+                findEvasionCandidate(
+                        mob,
+                        anchor,
+                        candidateX,
+                        candidateZ,
+                        maxAnchorRadius
+                );
+
+        if (candidate == null) {
             return false;
         }
-
-        /*
-         * RangedBowAttackGoal's movement calls are disabled in
-         * Stay mode. This is therefore the single movement
-         * command controlling melee evasion.
-         */
-        mob.getNavigation().stop();
 
         mob.lookAt(
                 target,
                 30.0F,
                 30.0F
         );
+
+        /*
+         * Flat ground retains the responsive backward/lateral
+         * strafe behavior.
+         *
+         * If the safest retreat square is one block higher or
+         * lower, hand the move to normal path navigation so the
+         * Moblet can actually climb/drop with the terrain instead
+         * of repeatedly strafing into the obstacle.
+         */
+        if (candidate.getY()
+                != mob.blockPosition().getY()) {
+
+            Path path =
+                    mob.getNavigation()
+                            .createPath(
+                                    candidate,
+                                    0
+                            );
+
+            return MobletSafeNavigation.moveToSafely(
+                    mob,
+                    path,
+                    EVADE_TERRAIN_SPEED
+            );
+        }
+
+        mob.getNavigation().stop();
 
         mob.getMoveControl().strafe(
                 EVADE_BACKWARDS,
@@ -222,6 +268,49 @@ public final class MobletSentryMovement {
 
         return true;
     }
+
+    private static BlockPos findEvasionCandidate(
+            Mob mob,
+            BlockPos anchor,
+            int candidateX,
+            int candidateZ,
+            double maxAnchorRadius
+    ) {
+        int baseY =
+                mob.blockPosition().getY();
+
+        /*
+         * Prefer staying level. If the retreat direction runs
+         * into terrain, allow ordinary one-block climbing or
+         * descending rather than abandoning the retreat.
+         */
+        int[] verticalOffsets = {
+                0,
+                1,
+                -1
+        };
+
+        for (int verticalOffset : verticalOffsets) {
+            BlockPos candidate =
+                    new BlockPos(
+                            candidateX,
+                            baseY + verticalOffset,
+                            candidateZ
+                    );
+
+            if (isSafeEvasionCandidate(
+                    mob,
+                    anchor,
+                    candidate,
+                    maxAnchorRadius)) {
+
+                return candidate;
+            }
+        }
+
+        return null;
+    }
+
 
     private static boolean isSafeEvasionCandidate(
             Mob mob,
@@ -257,6 +346,28 @@ public final class MobletSentryMovement {
 
         Level level =
                 mob.level();
+
+        /*
+         * A path may technically resolve near an obstructed block
+         * without that exact square being valid standing space.
+         * Verify the Moblet's real bounding box fits there.
+         */
+        var candidateBox =
+                mob.getBoundingBox().move(
+                        candidate.getX() + 0.5D
+                                - mob.getX(),
+                        candidate.getY()
+                                - mob.getY(),
+                        candidate.getZ() + 0.5D
+                                - mob.getZ()
+                );
+
+        if (!level.noCollision(
+                mob,
+                candidateBox
+        )) {
+            return false;
+        }
 
         BlockPos floor =
                 candidate.below();
