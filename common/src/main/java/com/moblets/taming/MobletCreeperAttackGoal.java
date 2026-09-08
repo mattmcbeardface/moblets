@@ -65,7 +65,9 @@ public final class MobletCreeperAttackGoal extends Goal {
                 && tameState.moblets$isTamed()
                 && target != null
                 && target.isAlive()
-                && !(target instanceof Player);
+                && !(target instanceof Player)
+                && (!(target instanceof MobletTameState targetState)
+                        || !targetState.moblets$isTamed());
     }
 
     @Override

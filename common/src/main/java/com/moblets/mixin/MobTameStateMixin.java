@@ -223,29 +223,45 @@ public abstract class MobTameStateMixin
 
 
     /*
-     * Tamed Witches are noncombatants.
+     * Tamed Moblets are allies.
      *
-     * Block every attempt to assign them a combat target.
-     * Their flee behavior reads getLastHurtByMob() directly,
-     * so it does not require a target.
+     * Never allow one tamed Moblet to acquire another tamed
+     * Moblet as a combat target, regardless of which AI path
+     * attempted to assign it.
+     *
+     * Tamed Witches remain complete noncombatants and therefore
+     * cannot acquire any combat target at all.
      */
     @Inject(
             method = "setTarget",
             at = @At("HEAD"),
             cancellable = true
     )
-    private void moblets$preventTamedWitchTarget(
+    private void moblets$preventFriendlyMobletTarget(
             LivingEntity target,
             CallbackInfo ci
     ) {
         Mob mob =
                 (Mob) (Object) this;
 
-        if (target != null
-                && mob instanceof Witch witch
+        if (target == null) {
+            return;
+        }
+
+        MobletTameState selfState =
+                (MobletTameState) mob;
+
+        if (selfState.moblets$isTamed()
+                && target instanceof MobletTameState targetState
+                && targetState.moblets$isTamed()) {
+
+            ci.cancel();
+            return;
+        }
+
+        if (mob instanceof Witch witch
                 && BabyWitches.isBaby(witch)
-                && ((MobletTameState) witch)
-                        .moblets$isTamed()) {
+                && selfState.moblets$isTamed()) {
 
             ci.cancel();
         }

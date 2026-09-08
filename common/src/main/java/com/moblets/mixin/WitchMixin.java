@@ -303,7 +303,7 @@ public abstract class WitchMixin
          * Wild baby Witch curiosity/taming behavior.
          */
         this.goalSelector.addGoal(
-                2,
+                1,
                 new MobletCuriosityGoal(
                         witch
                 )
