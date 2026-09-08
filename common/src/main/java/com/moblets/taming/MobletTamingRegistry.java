@@ -1,6 +1,7 @@
 package com.moblets.taming;
 
 import com.moblets.BabyCreepers;
+import com.moblets.BabyPillagers;
 import java.util.IdentityHashMap;
 import java.util.Map;
 
@@ -12,6 +13,7 @@ import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.skeleton.AbstractSkeleton;
 import net.minecraft.world.entity.monster.Creeper;
+import net.minecraft.world.entity.monster.illager.Pillager;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
@@ -83,6 +85,16 @@ public final class MobletTamingRegistry {
                         0.20F
                 )
         );
+        register(
+                EntityTypes.PILLAGER,
+                new MobletTamingRule(
+                        mob -> mob instanceof Pillager pillager
+                                && BabyPillagers.isBaby(pillager),
+                        stack -> stack.is(Items.GOLD_INGOT),
+                        0.33F
+                )
+        );
+
         register(
                 EntityTypes.CREEPER,
                 new MobletTamingRule(

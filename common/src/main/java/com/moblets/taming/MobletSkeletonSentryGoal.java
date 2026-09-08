@@ -1,5 +1,6 @@
 package com.moblets.taming;
 
+import com.moblets.BabyPillagers;
 import com.moblets.BabySkeletons;
 
 import java.util.List;
@@ -10,6 +11,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.monster.skeleton.AbstractSkeleton;
+import net.minecraft.world.entity.monster.illager.Pillager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 
@@ -45,6 +47,25 @@ public final class MobletSkeletonSentryGoal extends Goal {
     private static final double EVADE_STOP_DISTANCE_SQR =
             168.75D;
 
+    /*
+     * Pillagers use tighter spacing than Skeleton sentries.
+     * They have no armor, but should not flee so far that they
+     * abandon their assigned defensive position.
+     */
+    /*
+     * Pillager crossbow AI only begins charging within its
+     * eight-block attack radius, so Stay-mode evasion must
+     * remain comfortably inside that envelope.
+     */
+    private static final double PILLAGER_EVADE_START_DISTANCE_SQR =
+            25.0D;
+
+    private static final double PILLAGER_EVADE_STOP_DISTANCE_SQR =
+            42.25D;
+
+    private static final double PILLAGER_EVADE_ANCHOR_RADIUS =
+            5.0D;
+
     private static final double EVADE_VERTICAL_RANGE =
             2.0D;
 
@@ -67,9 +88,7 @@ public final class MobletSkeletonSentryGoal extends Goal {
         MobletTameState state =
                 (MobletTameState) this.mob;
 
-        return this.mob instanceof AbstractSkeleton skeleton
-                && BabySkeletons.isBaby(skeleton)
-                && BabySkeletons.isRangedFamily(skeleton)
+        return isSupportedRangedMob()
                 && state.moblets$isTamed()
                 && state.moblets$isOrderedToStay()
                 && state.moblets$getStayAnchor() != null;
@@ -209,10 +228,15 @@ public final class MobletSkeletonSentryGoal extends Goal {
          * Enter evasion only once the attacker crosses the
          * same close-range threshold used by vanilla bow AI.
          */
+        double evadeStartDistanceSqr =
+                this.mob instanceof Pillager
+                        ? PILLAGER_EVADE_START_DISTANCE_SQR
+                        : EVADE_START_DISTANCE_SQR;
+
         if (!this.evading
                 && sameVerticalBand
                 && distanceSqr
-                        < EVADE_START_DISTANCE_SQR) {
+                        < evadeStartDistanceSqr) {
 
             this.evading = true;
             this.strafeClockwise =
@@ -229,10 +253,15 @@ public final class MobletSkeletonSentryGoal extends Goal {
          * Do NOT shut evasion off merely because the target
          * crossed back over the entry threshold.
          */
+        double evadeStopDistanceSqr =
+                this.mob instanceof Pillager
+                        ? PILLAGER_EVADE_STOP_DISTANCE_SQR
+                        : EVADE_STOP_DISTANCE_SQR;
+
         if (this.evading
                 && (!sameVerticalBand
                         || distanceSqr
-                                > EVADE_STOP_DISTANCE_SQR)) {
+                                > evadeStopDistanceSqr)) {
 
             resetEvasion();
         }
@@ -263,21 +292,17 @@ public final class MobletSkeletonSentryGoal extends Goal {
              * makes it unsafe, try the opposite side before
              * giving up on movement.
              */
-            if (MobletSentryMovement
-                    .tryEvasionStep(
-                            this.mob,
-                            anchor,
-                            target,
-                            this.strafeClockwise)) {
+            if (tryEvasionStep(
+                    anchor,
+                    target,
+                    this.strafeClockwise)) {
                 return;
             }
 
-            if (MobletSentryMovement
-                    .tryEvasionStep(
-                            this.mob,
-                            anchor,
-                            target,
-                            !this.strafeClockwise)) {
+            if (tryEvasionStep(
+                    anchor,
+                    target,
+                    !this.strafeClockwise)) {
 
                 this.strafeClockwise =
                         !this.strafeClockwise;
@@ -306,6 +331,32 @@ public final class MobletSkeletonSentryGoal extends Goal {
                 this.mob,
                 anchor,
                 target
+        );
+    }
+
+    private boolean isSupportedRangedMob() {
+        if (this.mob instanceof AbstractSkeleton skeleton) {
+            return BabySkeletons.isBaby(skeleton)
+                    && BabySkeletons.isRangedFamily(skeleton);
+        }
+
+        if (this.mob instanceof Pillager pillager) {
+            return BabyPillagers.isBaby(pillager);
+        }
+
+        return false;
+    }
+
+    private boolean tryEvasionStep(
+            BlockPos anchor,
+            LivingEntity target,
+            boolean clockwise
+    ) {
+        return MobletSentryMovement.tryEvasionStep(
+                this.mob,
+                anchor,
+                target,
+                clockwise
         );
     }
 

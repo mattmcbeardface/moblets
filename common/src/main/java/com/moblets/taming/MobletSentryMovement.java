@@ -99,6 +99,22 @@ public final class MobletSentryMovement {
             LivingEntity target,
             boolean clockwise
     ) {
+        return tryEvasionStep(
+                mob,
+                anchor,
+                target,
+                clockwise,
+                Double.POSITIVE_INFINITY
+        );
+    }
+
+    public static boolean tryEvasionStep(
+            Mob mob,
+            BlockPos anchor,
+            LivingEntity target,
+            boolean clockwise,
+            double maxAnchorRadius
+    ) {
         double towardX =
                 target.getX() - mob.getX();
 
@@ -178,7 +194,9 @@ public final class MobletSentryMovement {
 
         if (!isSafeEvasionCandidate(
                 mob,
-                candidate)) {
+                anchor,
+                candidate,
+                maxAnchorRadius)) {
             return false;
         }
 
@@ -207,8 +225,36 @@ public final class MobletSentryMovement {
 
     private static boolean isSafeEvasionCandidate(
             Mob mob,
-            BlockPos candidate
+            BlockPos anchor,
+            BlockPos candidate,
+            double maxAnchorRadius
     ) {
+        if (Double.isFinite(maxAnchorRadius)) {
+            double anchorX =
+                    anchor.getX() + 0.5D;
+
+            double anchorZ =
+                    anchor.getZ() + 0.5D;
+
+            double candidateX =
+                    candidate.getX() + 0.5D;
+
+            double candidateZ =
+                    candidate.getZ() + 0.5D;
+
+            double dx =
+                    candidateX - anchorX;
+
+            double dz =
+                    candidateZ - anchorZ;
+
+            if (dx * dx + dz * dz
+                    > maxAnchorRadius
+                    * maxAnchorRadius) {
+                return false;
+            }
+        }
+
         Level level =
                 mob.level();
 

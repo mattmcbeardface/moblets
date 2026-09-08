@@ -20,7 +20,8 @@
     "WanderingTraderMixin",
     "ItemEntityMixin",
     "MobTameStateMixin",
-    "RangedBowAttackGoalMixin"
+    "RangedBowAttackGoalMixin",
+    "RangedCrossbowAttackGoalMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -6,6 +6,7 @@ import net.minecraft.core.BlockPos;
 
 import com.moblets.BabySkeletons;
 import com.moblets.BabyCreepers;
+import com.moblets.BabyPillagers;
 import com.moblets.taming.MobletTameState;
 import com.moblets.taming.MobletTaming;
 
@@ -18,9 +19,11 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.skeleton.AbstractSkeleton;
 import net.minecraft.world.entity.monster.Creeper;
+import net.minecraft.world.entity.monster.illager.Pillager;
 import net.minecraft.world.entity.monster.skeleton.WitherSkeleton;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BowItem;
+import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.ValueInput;
@@ -232,6 +235,11 @@ public abstract class MobTameStateMixin
                                 && BabyCreepers.isBaby(creeper)
                                 && player.getItemInHand(hand)
                                         .is(Items.GUNPOWDER)
+                        ||
+                        mob instanceof Pillager pillager
+                                && BabyPillagers.isBaby(pillager)
+                                && player.getItemInHand(hand)
+                                        .is(Items.GOLD_NUGGET)
                 )) {
 
             /*
@@ -583,6 +591,12 @@ public abstract class MobTameStateMixin
                         }
                     }
 
+                    player.sendOverlayMessage(
+                            Component.literal(
+                                    "Moblet armor equipped."
+                            )
+                    );
+
                     cir.setReturnValue(
                             InteractionResult.SUCCESS_SERVER
                     );
@@ -691,6 +705,96 @@ public abstract class MobTameStateMixin
         }
 
         /*
+         * Owner-managed Pillager crossbow equipment.
+         *
+         * Right-clicking a tamed baby Pillager with a crossbow
+         * replaces its current main-hand weapon. The complete
+         * ItemStack is copied, preserving enchantments,
+         * durability and other components.
+         */
+        if (hand == InteractionHand.MAIN_HAND
+                && mob instanceof Pillager pillager
+                && BabyPillagers.isBaby(pillager)
+                && player.getItemInHand(hand).getItem()
+                        instanceof CrossbowItem) {
+
+            ItemStack held =
+                    player.getItemInHand(hand);
+
+            /*
+             * Prevent the player's own crossbow use action from
+             * starting on the client.
+             */
+            if (mob.level().isClientSide()) {
+                cir.setReturnValue(
+                        InteractionResult.SUCCESS
+                );
+                return;
+            }
+
+            /*
+             * Only the owner may replace the weapon.
+             */
+            if (!moblets$isOwnedBy(player)) {
+                cir.setReturnValue(
+                        InteractionResult.CONSUME
+                );
+                return;
+            }
+
+            ItemStack previous =
+                    mob.getItemBySlot(
+                            EquipmentSlot.MAINHAND
+                    );
+
+            ItemStack equipped =
+                    held.copyWithCount(1);
+
+            mob.setItemSlot(
+                    EquipmentSlot.MAINHAND,
+                    equipped
+            );
+
+            /*
+             * A player-supplied crossbow should be recoverable
+             * if the Moblet later dies.
+             */
+            mob.setGuaranteedDrop(
+                    EquipmentSlot.MAINHAND
+            );
+
+            if (!player.getAbilities().instabuild) {
+                held.shrink(1);
+            }
+
+            /*
+             * Give the previous weapon back to the owner.
+             */
+            if (!previous.isEmpty()) {
+                ItemStack returned =
+                        previous.copy();
+
+                if (!player.addItem(returned)) {
+                    player.drop(
+                            returned,
+                            false
+                    );
+                }
+            }
+
+            player.sendOverlayMessage(
+                    Component.literal(
+                            "Moblet crossbow equipped."
+                    )
+            );
+
+            cir.setReturnValue(
+                    InteractionResult.SUCCESS_SERVER
+            );
+            return;
+        }
+
+        /*
          * Owner-managed Wither Skeleton sword equipment.
          *
          * The Wither Moblet is the melee specialist: swords are
@@ -788,7 +892,8 @@ public abstract class MobTameStateMixin
          */
         if (hand == InteractionHand.MAIN_HAND
                 && moblets$isOwnedBy(player)
-                && mob instanceof AbstractSkeleton
+                && mob instanceof AbstractSkeleton skeleton
+                && BabySkeletons.isBaby(skeleton)
                 && player.isShiftKeyDown()
                 && player.getItemInHand(hand).isEmpty()) {
 
@@ -867,6 +972,9 @@ public abstract class MobTameStateMixin
                         ||
                         mob instanceof Creeper creeper
                                 && BabyCreepers.isBaby(creeper)
+                        ||
+                        mob instanceof Pillager pillager
+                                && BabyPillagers.isBaby(pillager)
                 )) {
 
             /*

@@ -29,6 +29,9 @@ public final class BabyPillagers {
     private static final Identifier BABY_DAMAGE_ID =
             Identifier.fromNamespaceAndPath(Moblets.MOD_ID, "baby_pillager_damage");
 
+    private static final Identifier TAMED_HEALTH_ID =
+            Identifier.fromNamespaceAndPath(Moblets.MOD_ID, "tamed_pillager_health");
+
     private static final AttributeModifier BABY_SCALE =
             new AttributeModifier(
                     BABY_SCALE_ID,
@@ -90,6 +93,38 @@ public final class BabyPillagers {
         if (damage != null) {
             damage.addOrReplacePermanentModifier(BABY_DAMAGE);
         }
+    }
+
+    public static void applyTamedStats(Pillager pillager) {
+        if (!isBaby(pillager)) {
+            return;
+        }
+
+        AttributeInstance health =
+                pillager.getAttribute(
+                        Attributes.MAX_HEALTH
+                );
+
+        if (health == null) {
+            return;
+        }
+
+        double targetHealth = 35.0D;
+
+        double bonus =
+                targetHealth - health.getBaseValue();
+
+        health.addOrReplacePermanentModifier(
+                new AttributeModifier(
+                        TAMED_HEALTH_ID,
+                        bonus,
+                        AttributeModifier.Operation.ADD_VALUE
+                )
+        );
+
+        pillager.setHealth(
+                pillager.getMaxHealth()
+        );
     }
 
     public static boolean isBaby(Pillager pillager) {
