@@ -42,10 +42,10 @@ public final class MobletSkeletonSentryGoal extends Goal {
      * seeing in Stay mode.
      */
     private static final double EVADE_START_DISTANCE_SQR =
-            56.25D;
+            25.0D;
 
     private static final double EVADE_STOP_DISTANCE_SQR =
-            168.75D;
+            64.0D;
 
     /*
      * Pillager crossbow AI only begins charging within its
@@ -56,7 +56,7 @@ public final class MobletSkeletonSentryGoal extends Goal {
             25.0D;
 
     private static final double PILLAGER_EVADE_STOP_DISTANCE_SQR =
-            42.25D;
+            49.0D;
 
     private static final double PILLAGER_EVADE_ANCHOR_RADIUS =
             5.0D;
@@ -246,6 +246,14 @@ public final class MobletSkeletonSentryGoal extends Goal {
                         < evadeStartDistanceSqr) {
 
             this.evading = true;
+
+            /*
+             * Any old LOS/reposition path belongs to pre-evasion
+             * movement. Clear it so a path started by terrain-aware
+             * evasion can be allowed to finish uninterrupted.
+             */
+            this.mob.getNavigation().stop();
+
             this.strafeClockwise =
                     this.mob.getRandom()
                             .nextBoolean();

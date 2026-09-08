@@ -67,8 +67,13 @@ public final class MobletFollowOwnerGoal extends Goal {
             return false;
         }
 
-        return this.mob.distanceToSqr(this.owner)
-                > FOLLOW_START_DISTANCE_SQR;
+        boolean needsWaterExit =
+                this.mob.isInWater()
+                        && !this.owner.isInWater();
+
+        return needsWaterExit
+                || this.mob.distanceToSqr(this.owner)
+                        > FOLLOW_START_DISTANCE_SQR;
     }
 
     @Override
@@ -86,8 +91,13 @@ public final class MobletFollowOwnerGoal extends Goal {
             return false;
         }
 
-        return this.mob.distanceToSqr(this.owner)
-                > FOLLOW_STOP_DISTANCE_SQR;
+        boolean needsWaterExit =
+                this.mob.isInWater()
+                        && !this.owner.isInWater();
+
+        return needsWaterExit
+                || this.mob.distanceToSqr(this.owner)
+                        > FOLLOW_STOP_DISTANCE_SQR;
     }
 
     @Override
