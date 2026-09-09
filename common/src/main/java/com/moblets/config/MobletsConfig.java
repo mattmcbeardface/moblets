@@ -21,6 +21,10 @@ import com.moblets.registry.MobletDefinition;
 import com.moblets.registry.MobletRegistry;
 
 public final class MobletsConfig {
+    public static final int MIN_PILLAGER_OUTPOST_MOBLETS = 0;
+    public static final int MAX_PILLAGER_OUTPOST_MOBLETS = 10;
+    public static final int DEFAULT_PILLAGER_OUTPOST_MOBLETS = 2;
+
     private static final Gson GSON =
             new GsonBuilder()
                     .setPrettyPrinting()
@@ -52,6 +56,49 @@ public final class MobletsConfig {
         return spawnPercent(definition) / 100.0F;
     }
 
+    public static synchronized boolean spawningEnabled() {
+        return data.spawningEnabled == null
+                || data.spawningEnabled;
+    }
+
+    public static synchronized void setSpawningEnabled(
+            boolean enabled
+    ) {
+        data.spawningEnabled = enabled;
+    }
+
+    public static synchronized boolean spawnEnabled(
+            MobletDefinition definition
+    ) {
+        if (!definition.usesRandomSpawn()) {
+            return false;
+        }
+
+        return spawningEnabled()
+                && speciesSpawningEnabled(definition);
+    }
+
+    public static synchronized boolean speciesSpawningEnabled(
+            MobletDefinition definition
+    ) {
+        if (!definition.usesRandomSpawn()) {
+            return false;
+        }
+
+        return entry(definition).spawningEnabled();
+    }
+
+    public static synchronized void setSpeciesSpawningEnabled(
+            MobletDefinition definition,
+            boolean enabled
+    ) {
+        if (!definition.usesRandomSpawn()) {
+            return;
+        }
+
+        entry(definition).setSpawningEnabled(enabled);
+    }
+
     public static synchronized float spawnPercent(
             MobletDefinition definition
     ) {
@@ -63,8 +110,58 @@ public final class MobletsConfig {
             MobletDefinition definition,
             float percent
     ) {
+        if (!definition.usesRandomSpawn()) {
+            return;
+        }
+
+        float value = Float.isFinite(percent)
+                ? percent
+                : definition.defaultSpawnChance()
+                        * 100.0F;
+
         entry(definition)
-                .setSpawnPercent(percent);
+                .setSpawnPercent(value);
+    }
+
+    public static synchronized boolean pillagerOutpostSpawningEnabled() {
+        return spawningEnabled()
+                && encounterEnabled(
+                        EncounterRegistry.PILLAGER_OUTPOST
+                );
+    }
+
+    public static synchronized int pillagerOutpostMobletCount() {
+        if (data.pillagerOutpostMobletCount == null) {
+            return DEFAULT_PILLAGER_OUTPOST_MOBLETS;
+        }
+
+        return clampPillagerOutpostMobletCount(
+                data.pillagerOutpostMobletCount
+        );
+    }
+
+    public static synchronized void setPillagerOutpostMobletCount(
+            int count
+    ) {
+        data.pillagerOutpostMobletCount =
+                clampPillagerOutpostMobletCount(count);
+    }
+
+    public static synchronized void resetSpawning() {
+        data.spawningEnabled = true;
+
+        for (MobletDefinition definition
+                : MobletRegistry.randomSpawnMoblets()) {
+            entry(definition).resetSpawning(definition);
+        }
+
+        data.encounters.put(
+                EncounterRegistry.PILLAGER_OUTPOST.id(),
+                EncounterRegistry.PILLAGER_OUTPOST
+                        .defaultEnabled()
+        );
+        data.pillagerOutpostMobletCount =
+                DEFAULT_PILLAGER_OUTPOST_MOBLETS;
     }
 
     public static synchronized boolean tamingEnabled(
@@ -322,8 +419,28 @@ public final class MobletsConfig {
             changed = true;
         }
 
+        if (data.spawningEnabled == null) {
+            data.spawningEnabled = true;
+            changed = true;
+        }
+
         if (data.tamingEnabled == null) {
             data.tamingEnabled = true;
+            changed = true;
+        }
+
+        int normalizedOutpostCount =
+                data.pillagerOutpostMobletCount == null
+                        ? DEFAULT_PILLAGER_OUTPOST_MOBLETS
+                        : clampPillagerOutpostMobletCount(
+                                data.pillagerOutpostMobletCount
+                        );
+
+        if (data.pillagerOutpostMobletCount == null
+                || data.pillagerOutpostMobletCount
+                        != normalizedOutpostCount) {
+            data.pillagerOutpostMobletCount =
+                    normalizedOutpostCount;
             changed = true;
         }
 
@@ -399,6 +516,18 @@ public final class MobletsConfig {
                 || definition.hasAdvancedBalance();
     }
 
+    private static int clampPillagerOutpostMobletCount(
+            int count
+    ) {
+        return Math.max(
+                MIN_PILLAGER_OUTPOST_MOBLETS,
+                Math.min(
+                        MAX_PILLAGER_OUTPOST_MOBLETS,
+                        count
+                )
+        );
+    }
+
     private static void backupBrokenConfig() {
         if (!Files.exists(configFile)) {
             return;
@@ -426,7 +555,9 @@ public final class MobletsConfig {
     }
 
     private static final class ConfigData {
+        private Boolean spawningEnabled;
         private Boolean tamingEnabled;
+        private Integer pillagerOutpostMobletCount;
 
         private Map<String, MobletConfigEntry> mobs =
                 new LinkedHashMap<>();
