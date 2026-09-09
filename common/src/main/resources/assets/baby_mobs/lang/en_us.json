@@ -20,5 +20,18 @@
   "screen.baby_mobs.config.spawning.outpost_count_value": "%s",
   "screen.baby_mobs.config.spawning.reset": "Reset to Defaults",
   "screen.baby_mobs.config.encounters": "Encounters",
+  "screen.baby_mobs.config.encounters.description": "Special Moblet encounters that occur alongside",
+  "screen.baby_mobs.config.encounters.description_more": "specific vanilla mobs or structures.",
+  "screen.baby_mobs.config.encounters.pillager_outpost.name": "Pillager Outpost",
+  "screen.baby_mobs.config.encounters.pillager_outpost.description": "Baby Pillagers appear with outpost Pillagers.",
+  "screen.baby_mobs.config.encounters.wandering_trader_caravan.name": "Wandering Trader Caravan",
+  "screen.baby_mobs.config.encounters.wandering_trader_caravan.description": "Adds a baby Wandering Trader and baby llamas.",
+  "screen.baby_mobs.config.encounters.snow_golem_companion.name": "Snow Golem Companion",
+  "screen.baby_mobs.config.encounters.snow_golem_companion.description": "Adult Snow Golems can have a Baby Snow Golem nearby.",
+  "screen.baby_mobs.config.encounters.iron_golem_companion.name": "Iron Golem Companion",
+  "screen.baby_mobs.config.encounters.iron_golem_companion.description": "Village Iron Golems can have a Baby Iron Golem nearby.",
+  "screen.baby_mobs.config.encounters.camel_husk_riders.name": "Baby Camel Husk Riders",
+  "screen.baby_mobs.config.encounters.camel_husk_riders.description": "Riders on Baby Camel Husks are converted to babies.",
+  "screen.baby_mobs.config.encounters.reset": "Reset to Defaults",
   "screen.baby_mobs.config.advanced": "Advanced"
 }

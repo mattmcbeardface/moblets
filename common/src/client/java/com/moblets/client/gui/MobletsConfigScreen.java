@@ -65,10 +65,7 @@ public final class MobletsConfigScreen extends Screen {
                 ENCOUNTERS,
                 gridX,
                 gridY + CATEGORY_BUTTON_HEIGHT + GRID_SPACING,
-                () -> new MobletsCategoryScreen(
-                        this,
-                        ENCOUNTERS
-                )
+                () -> new MobletsEncountersScreen(this)
         );
         this.addCategoryButton(
                 ADVANCED,
