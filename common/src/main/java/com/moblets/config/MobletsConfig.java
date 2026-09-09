@@ -74,11 +74,32 @@ public final class MobletsConfig {
             return false;
         }
 
-        return entry(definition)
-                .tamingEnabled();
+        return globalTamingEnabled()
+                && speciesTamingEnabled(definition);
     }
 
-    public static synchronized void setTamingEnabled(
+    public static synchronized boolean globalTamingEnabled() {
+        return data.tamingEnabled == null
+                || data.tamingEnabled;
+    }
+
+    public static synchronized void setGlobalTamingEnabled(
+            boolean enabled
+    ) {
+        data.tamingEnabled = enabled;
+    }
+
+    public static synchronized boolean speciesTamingEnabled(
+            MobletDefinition definition
+    ) {
+        if (!definition.supportsTaming()) {
+            return false;
+        }
+
+        return entry(definition).tamingEnabled();
+    }
+
+    public static synchronized void setSpeciesTamingEnabled(
             MobletDefinition definition,
             boolean enabled
     ) {
@@ -88,6 +109,49 @@ public final class MobletsConfig {
 
         entry(definition)
                 .setTamingEnabled(enabled);
+    }
+
+    public static synchronized float tamingChance(
+            MobletDefinition definition
+    ) {
+        return tamingPercent(definition) / 100.0F;
+    }
+
+    public static synchronized float tamingPercent(
+            MobletDefinition definition
+    ) {
+        if (!definition.supportsTaming()) {
+            return 0.0F;
+        }
+
+        return entry(definition)
+                .tamingPercent(definition);
+    }
+
+    public static synchronized void setTamingPercent(
+            MobletDefinition definition,
+            float percent
+    ) {
+        if (!definition.supportsTaming()) {
+            return;
+        }
+
+        float value = Float.isFinite(percent)
+                ? percent
+                : definition.defaultTamingChance()
+                        * 100.0F;
+
+        entry(definition)
+                .setTamingPercent(value);
+    }
+
+    public static synchronized void resetTaming() {
+        data.tamingEnabled = true;
+
+        for (MobletDefinition definition
+                : MobletRegistry.tameableMoblets()) {
+            entry(definition).resetTaming(definition);
+        }
     }
 
     public static synchronized double balanceMultiplier(
@@ -258,6 +322,11 @@ public final class MobletsConfig {
             changed = true;
         }
 
+        if (data.tamingEnabled == null) {
+            data.tamingEnabled = true;
+            changed = true;
+        }
+
         if (data.encounters == null) {
             data.encounters = new LinkedHashMap<>();
             changed = true;
@@ -357,6 +426,8 @@ public final class MobletsConfig {
     }
 
     private static final class ConfigData {
+        private Boolean tamingEnabled;
+
         private Map<String, MobletConfigEntry> mobs =
                 new LinkedHashMap<>();
 

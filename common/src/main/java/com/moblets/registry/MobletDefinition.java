@@ -19,6 +19,7 @@ public final class MobletDefinition {
     private final float defaultSpawnChance;
 
     private final boolean supportsTaming;
+    private final float defaultTamingChance;
     private final boolean advancedBalance;
 
     private final Set<BalanceStat> balanceStats;
@@ -31,6 +32,7 @@ public final class MobletDefinition {
         this.randomSpawn = builder.randomSpawn;
         this.defaultSpawnChance = builder.defaultSpawnChance;
         this.supportsTaming = builder.supportsTaming;
+        this.defaultTamingChance = builder.defaultTamingChance;
         this.advancedBalance = builder.advancedBalance;
 
         if (builder.balanceStats.isEmpty()) {
@@ -70,6 +72,10 @@ public final class MobletDefinition {
         return supportsTaming;
     }
 
+    public float defaultTamingChance() {
+        return defaultTamingChance;
+    }
+
     public boolean hasAdvancedBalance() {
         return advancedBalance;
     }
@@ -106,6 +112,7 @@ public final class MobletDefinition {
         private float defaultSpawnChance;
 
         private boolean supportsTaming;
+        private float defaultTamingChance;
         private boolean advancedBalance;
 
         private final EnumSet<BalanceStat> balanceStats =
@@ -129,8 +136,17 @@ public final class MobletDefinition {
             return this;
         }
 
-        public Builder tameable() {
+        public Builder tameable(float defaultChance) {
+            if (!Float.isFinite(defaultChance)
+                    || defaultChance < 0.0F
+                    || defaultChance > 1.0F) {
+                throw new IllegalArgumentException(
+                        "Default taming chance must be between 0 and 1."
+                );
+            }
+
             this.supportsTaming = true;
+            this.defaultTamingChance = defaultChance;
             return this;
         }
 

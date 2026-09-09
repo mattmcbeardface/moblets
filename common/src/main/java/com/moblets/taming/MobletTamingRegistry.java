@@ -29,8 +29,7 @@ public final class MobletTamingRegistry {
                 new MobletTamingRule(
                         mob -> mob instanceof AbstractSkeleton skeleton
                                 && BabySkeletons.isBaby(skeleton),
-                        stack -> stack.is(Items.STRING),
-                        0.25F
+                        stack -> stack.is(Items.STRING)
                 )
         );
 
@@ -39,8 +38,7 @@ public final class MobletTamingRegistry {
                 new MobletTamingRule(
                         mob -> mob instanceof AbstractSkeleton skeleton
                                 && BabySkeletons.isBaby(skeleton),
-                        stack -> stack.is(Items.RABBIT_HIDE),
-                        0.40F
+                        stack -> stack.is(Items.RABBIT_HIDE)
                 )
         );
 
@@ -50,8 +48,7 @@ public final class MobletTamingRegistry {
                         mob -> mob instanceof AbstractSkeleton skeleton
                                 && BabySkeletons.isBaby(skeleton),
                         stack -> stack.is(Items.RED_MUSHROOM)
-                                || stack.is(Items.BROWN_MUSHROOM),
-                        0.25F
+                                || stack.is(Items.BROWN_MUSHROOM)
                 )
         );
 
@@ -72,8 +69,7 @@ public final class MobletTamingRegistry {
 
                             return contents != null
                                     && contents.is(Potions.WATER);
-                        },
-                        0.50F
+                        }
                 )
         );
 
@@ -82,8 +78,7 @@ public final class MobletTamingRegistry {
                 new MobletTamingRule(
                         mob -> mob instanceof AbstractSkeleton skeleton
                                 && BabySkeletons.isBaby(skeleton),
-                        stack -> stack.is(Items.NETHER_WART),
-                        0.20F
+                        stack -> stack.is(Items.NETHER_WART)
                 )
         );
         register(
@@ -91,8 +86,7 @@ public final class MobletTamingRegistry {
                 new MobletTamingRule(
                         mob -> mob instanceof Pillager pillager
                                 && BabyPillagers.isBaby(pillager),
-                        stack -> stack.is(Items.GOLD_INGOT),
-                        0.33F
+                        stack -> stack.is(Items.GOLD_INGOT)
                 )
         );
 
@@ -103,8 +97,7 @@ public final class MobletTamingRegistry {
                                 && BabyWitches.isBaby(witch),
                         stack -> stack.is(
                                 Items.FERMENTED_SPIDER_EYE
-                        ),
-                        0.25F
+                        )
                 )
         );
 
@@ -113,8 +106,7 @@ public final class MobletTamingRegistry {
                 new MobletTamingRule(
                         mob -> mob instanceof Creeper creeper
                                 && BabyCreepers.isBaby(creeper),
-                        stack -> stack.is(Items.FIREWORK_ROCKET),
-                        0.25F
+                        stack -> stack.is(Items.FIREWORK_ROCKET)
                 )
         );
     }
