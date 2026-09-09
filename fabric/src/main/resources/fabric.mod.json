@@ -8,6 +8,9 @@
   "entrypoints": {
     "main": [
       "com.moblets.BabyMobs"
+    ],
+    "modmenu": [
+      "com.moblets.fabric.client.MobletsModMenuIntegration"
     ]
   },
   "mixins": [

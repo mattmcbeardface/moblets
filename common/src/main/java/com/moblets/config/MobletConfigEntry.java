@@ -9,6 +9,7 @@ import com.moblets.registry.MobletDefinition;
 final class MobletConfigEntry {
     private Float spawnPercent;
     private Boolean tamingEnabled;
+    private Float tamingPercent;
     private Map<String, Double> balance = new LinkedHashMap<>();
 
     boolean normalize(MobletDefinition definition) {
@@ -35,10 +36,32 @@ final class MobletConfigEntry {
             }
         }
 
-        if (definition.supportsTaming()
-                && tamingEnabled == null) {
-            tamingEnabled = true;
-            changed = true;
+        if (definition.supportsTaming()) {
+            if (tamingEnabled == null) {
+                tamingEnabled = true;
+                changed = true;
+            }
+
+            float defaultPercent =
+                    definition.defaultTamingChance()
+                            * 100.0F;
+
+            if (tamingPercent == null
+                    || !Float.isFinite(tamingPercent)) {
+                tamingPercent = defaultPercent;
+                changed = true;
+            } else {
+                float clamped = clamp(
+                        tamingPercent,
+                        0.0F,
+                        100.0F
+                );
+
+                if (Float.compare(clamped, tamingPercent) != 0) {
+                    tamingPercent = clamped;
+                    changed = true;
+                }
+            }
         }
 
         if (balance == null) {
@@ -85,6 +108,30 @@ final class MobletConfigEntry {
 
     void setTamingEnabled(boolean enabled) {
         tamingEnabled = enabled;
+    }
+
+    float tamingPercent(MobletDefinition definition) {
+        if (tamingPercent != null
+                && Float.isFinite(tamingPercent)) {
+            return clamp(
+                    tamingPercent,
+                    0.0F,
+                    100.0F
+            );
+        }
+
+        return definition.defaultTamingChance()
+                * 100.0F;
+    }
+
+    void setTamingPercent(float value) {
+        tamingPercent = clamp(value, 0.0F, 100.0F);
+    }
+
+    void resetTaming(MobletDefinition definition) {
+        tamingEnabled = true;
+        tamingPercent = definition.defaultTamingChance()
+                * 100.0F;
     }
 
     double balanceMultiplier(BalanceStat stat) {

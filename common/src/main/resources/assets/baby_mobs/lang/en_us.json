@@ -1,0 +1,14 @@
+{
+  "screen.baby_mobs.config.title": "Moblets Configuration",
+  "screen.baby_mobs.config.taming": "Taming",
+  "screen.baby_mobs.config.taming.global": "Tameable Mobs",
+  "screen.baby_mobs.config.taming.tameable": "Tameable",
+  "screen.baby_mobs.config.taming.chance.heading": "Mob Taming Chance",
+  "screen.baby_mobs.config.taming.chance.description": "Chance that each taming item successfully tames the Moblet.",
+  "screen.baby_mobs.config.taming.chance.description_more": "Lower values may require more items.",
+  "screen.baby_mobs.config.taming.chance_value": "%s%%",
+  "screen.baby_mobs.config.taming.reset": "Reset to Defaults",
+  "screen.baby_mobs.config.spawning": "Spawning",
+  "screen.baby_mobs.config.encounters": "Encounters",
+  "screen.baby_mobs.config.advanced": "Advanced"
+}

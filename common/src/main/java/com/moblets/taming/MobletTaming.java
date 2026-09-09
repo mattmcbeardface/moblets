@@ -86,7 +86,9 @@ public final class MobletTaming {
 
         boolean success =
                 mob.getRandom().nextFloat()
-                        < rule.chance();
+                        < MobletsConfig.tamingChance(
+                                definition
+                        );
 
         state.moblets$beginConsideringTame(
                 player.getUUID(),
@@ -174,6 +176,18 @@ public final class MobletTaming {
 
         boolean success =
                 state.moblets$getPendingTameSuccess();
+
+        if (success) {
+            MobletDefinition definition =
+                    MobletRegistry.byEntityType(
+                            mob.getType()
+                    );
+
+            success = definition != null
+                    && MobletsConfig.tamingEnabled(
+                            definition
+                    );
+        }
 
         if (success && result.player != null) {
             state.moblets$setOwnerUuid(
