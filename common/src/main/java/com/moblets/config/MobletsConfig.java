@@ -298,6 +298,16 @@ public final class MobletsConfig {
         );
     }
 
+    public static synchronized void resetEncounters() {
+        for (EncounterDefinition definition
+                : EncounterRegistry.all()) {
+            data.encounters.put(
+                    definition.id(),
+                    definition.defaultEnabled()
+            );
+        }
+    }
+
     public static synchronized void resetMoblet(
             MobletDefinition definition
     ) {
