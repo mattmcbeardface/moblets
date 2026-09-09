@@ -1,7 +1,6 @@
 package com.moblets;
 
 import com.moblets.config.MobletsConfig;
-import com.moblets.registry.EncounterRegistry;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.entity.Entity;
@@ -143,9 +142,8 @@ public final class BabyPillagers {
 
         PENDING.removeAll(currentWorld);
 
-        if (!MobletsConfig.encounterEnabled(
-                EncounterRegistry.PILLAGER_OUTPOST
-        )) {
+        if (!MobletsConfig
+                .pillagerOutpostSpawningEnabled()) {
             return;
         }
 
@@ -168,17 +166,8 @@ public final class BabyPillagers {
             return;
         }
 
-        /*
-         * Every outpost deterministically gets either one or two babies.
-         *
-         * Using the structure's start chunk makes the target stable across
-         * server restarts instead of rerolling every time the area loads.
-         */
         int targetBabyCount =
-                1 + Math.floorMod(
-                        outpost.getChunkPos().x() * 31 + outpost.getChunkPos().z(),
-                        2
-                );
+                MobletsConfig.pillagerOutpostMobletCount();
 
         List<Pillager> sameOutpost = level
                 .getEntitiesOfClass(

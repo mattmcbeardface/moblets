@@ -7,6 +7,7 @@ import com.moblets.registry.BalanceStat;
 import com.moblets.registry.MobletDefinition;
 
 final class MobletConfigEntry {
+    private Boolean spawningEnabled;
     private Float spawnPercent;
     private Boolean tamingEnabled;
     private Float tamingPercent;
@@ -16,10 +17,16 @@ final class MobletConfigEntry {
         boolean changed = false;
 
         if (definition.usesRandomSpawn()) {
+            if (spawningEnabled == null) {
+                spawningEnabled = true;
+                changed = true;
+            }
+
             float defaultPercent =
                     definition.defaultSpawnChance() * 100.0F;
 
-            if (spawnPercent == null) {
+            if (spawnPercent == null
+                    || !Float.isFinite(spawnPercent)) {
                 spawnPercent = defaultPercent;
                 changed = true;
             } else {
@@ -91,15 +98,34 @@ final class MobletConfigEntry {
     }
 
     float spawnPercent(MobletDefinition definition) {
-        if (spawnPercent != null) {
-            return spawnPercent;
+        if (spawnPercent != null
+                && Float.isFinite(spawnPercent)) {
+            return clamp(
+                    spawnPercent,
+                    0.0F,
+                    100.0F
+            );
         }
 
         return definition.defaultSpawnChance() * 100.0F;
     }
 
+    boolean spawningEnabled() {
+        return spawningEnabled == null || spawningEnabled;
+    }
+
+    void setSpawningEnabled(boolean enabled) {
+        spawningEnabled = enabled;
+    }
+
     void setSpawnPercent(float value) {
         spawnPercent = clamp(value, 0.0F, 100.0F);
+    }
+
+    void resetSpawning(MobletDefinition definition) {
+        spawningEnabled = true;
+        spawnPercent = definition.defaultSpawnChance()
+                * 100.0F;
     }
 
     boolean tamingEnabled() {

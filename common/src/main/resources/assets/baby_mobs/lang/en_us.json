@@ -9,6 +9,16 @@
   "screen.baby_mobs.config.taming.chance_value": "%s%%",
   "screen.baby_mobs.config.taming.reset": "Reset to Defaults",
   "screen.baby_mobs.config.spawning": "Spawning",
+  "screen.baby_mobs.config.spawning.global": "Moblet Spawning",
+  "screen.baby_mobs.config.spawning.species": "Spawning",
+  "screen.baby_mobs.config.spawning.chance.heading": "Baby Spawn Chance",
+  "screen.baby_mobs.config.spawning.chance.description": "Chance that an eligible spawned mob will be a Moblet",
+  "screen.baby_mobs.config.spawning.chance.description_more": "instead of an adult.",
+  "screen.baby_mobs.config.spawning.chance_value": "%s%%",
+  "screen.baby_mobs.config.spawning.pillager_outpost": "Pillager Outpost Spawning",
+  "screen.baby_mobs.config.spawning.moblets_per_outpost": "Moblets per Outpost",
+  "screen.baby_mobs.config.spawning.outpost_count_value": "%s",
+  "screen.baby_mobs.config.spawning.reset": "Reset to Defaults",
   "screen.baby_mobs.config.encounters": "Encounters",
   "screen.baby_mobs.config.advanced": "Advanced"
 }

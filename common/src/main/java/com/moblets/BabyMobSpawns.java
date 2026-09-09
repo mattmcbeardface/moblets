@@ -24,6 +24,10 @@ public final class BabyMobSpawns {
             return;
         }
 
+        if (!MobletsConfig.spawnEnabled(definition)) {
+            return;
+        }
+
         if (roll(mob, MobletsConfig.spawnChance(definition))) {
             definition.applyBaby(mob);
         }

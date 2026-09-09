@@ -59,10 +59,7 @@ public final class MobletsConfigScreen extends Screen {
                 SPAWNING,
                 gridX + buttonWidth + GRID_SPACING,
                 gridY,
-                () -> new MobletsCategoryScreen(
-                        this,
-                        SPAWNING
-                )
+                () -> new MobletsSpawningScreen(this)
         );
         this.addCategoryButton(
                 ENCOUNTERS,
