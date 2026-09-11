@@ -1,5 +1,6 @@
 package com.moblets;
 
+import com.moblets.balance.MobletBalance;
 import com.moblets.config.MobletsConfig;
 import com.moblets.registry.EncounterRegistry;
 
@@ -85,6 +86,8 @@ public final class BabySnowGolems {
         if (speed != null) {
             speed.addOrReplacePermanentModifier(BABY_SPEED);
         }
+
+        MobletBalance.initialize(snowGolem);
     }
 
     public static boolean isBaby(SnowGolem snowGolem) {

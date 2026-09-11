@@ -1,6 +1,8 @@
 package com.moblets.mixin;
 
 import com.moblets.BabyCreepers;
+import com.moblets.balance.MobletBalance;
+import com.moblets.registry.BalanceStat;
 import com.moblets.taming.MobletTameState;
 
 import net.minecraft.server.level.ServerLevel;
@@ -62,7 +64,12 @@ public abstract class ServerExplosionMixin {
             return entity.hurtServer(
                     level,
                     damageSource,
-                    vanillaDamage / 3.0F
+                    vanillaDamage
+                            / 3.0F
+                            * (float) MobletBalance.multiplier(
+                                    creeper,
+                                    BalanceStat.DAMAGE
+                            )
             );
         }
 
@@ -95,6 +102,10 @@ public abstract class ServerExplosionMixin {
                 level,
                 damageSource,
                 vanillaDamage
+                        * (float) MobletBalance.multiplier(
+                                creeper,
+                                BalanceStat.DAMAGE
+                        )
         );
     }
 }

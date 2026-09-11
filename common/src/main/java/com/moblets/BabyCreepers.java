@@ -1,5 +1,6 @@
 package com.moblets;
 
+import com.moblets.balance.MobletBalance;
 import com.moblets.mixin.CreeperAccessor;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -49,6 +50,8 @@ public final class BabyCreepers {
 
         ((CreeperAccessor) creeper)
                 .babyMobs$setExplosionRadius(BABY_EXPLOSION_RADIUS);
+
+        MobletBalance.initialize(creeper);
     }
 
     public static void applyTamedStats(

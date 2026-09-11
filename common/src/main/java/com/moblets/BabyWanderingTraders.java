@@ -1,5 +1,6 @@
 package com.moblets;
 
+import com.moblets.balance.MobletBalance;
 import com.moblets.config.MobletsConfig;
 import com.moblets.registry.EncounterRegistry;
 
@@ -99,6 +100,8 @@ public final class BabyWanderingTraders {
         if (speed != null) {
             speed.addOrReplacePermanentModifier(BABY_SPEED);
         }
+
+        MobletBalance.initialize(trader);
     }
 
     public static boolean isBaby(WanderingTrader trader) {

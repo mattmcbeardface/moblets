@@ -1,5 +1,6 @@
 package com.moblets;
 
+import com.moblets.balance.MobletBalance;
 import com.moblets.mixin.EnderManDataAccessor;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -56,6 +57,8 @@ public final class BabyEndermen {
         if (damage != null) {
             damage.addOrReplacePermanentModifier(BABY_DAMAGE);
         }
+
+        MobletBalance.initialize(enderman);
     }
 
     public static boolean isBaby(EnderMan enderman) {

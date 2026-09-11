@@ -18,9 +18,12 @@ import com.moblets.registry.BalanceStat;
 import com.moblets.registry.EncounterDefinition;
 import com.moblets.registry.EncounterRegistry;
 import com.moblets.registry.MobletDefinition;
+import com.moblets.registry.MobletProfile;
 import com.moblets.registry.MobletRegistry;
 
 public final class MobletsConfig {
+    public static final double MAX_ADVANCED_MULTIPLIER = 15.0D;
+    public static final double PERFECT_AIM_MULTIPLIER = 1000.0D;
     public static final int MIN_PILLAGER_OUTPOST_MOBLETS = 0;
     public static final int MAX_PILLAGER_OUTPOST_MOBLETS = 10;
     public static final int DEFAULT_PILLAGER_OUTPOST_MOBLETS = 2;
@@ -37,6 +40,7 @@ public final class MobletsConfig {
             new ConfigData();
 
     private static Path configFile;
+    private static long advancedRevision;
 
     private MobletsConfig() {
     }
@@ -48,6 +52,7 @@ public final class MobletsConfig {
                 configDirectory.resolve(FILE_NAME);
 
         load();
+        advancedRevision++;
     }
 
     public static synchronized float spawnChance(
@@ -255,12 +260,24 @@ public final class MobletsConfig {
             MobletDefinition definition,
             BalanceStat stat
     ) {
-        if (!definition.balanceStats().contains(stat)) {
+        return balanceMultiplier(
+                definition,
+                MobletProfile.WILD,
+                stat
+        );
+    }
+
+    public static synchronized double balanceMultiplier(
+            MobletDefinition definition,
+            MobletProfile profile,
+            BalanceStat stat
+    ) {
+        if (!definition.supportsBalance(profile, stat)) {
             return 1.0D;
         }
 
         return entry(definition)
-                .balanceMultiplier(stat);
+                .balanceMultiplier(profile, stat);
     }
 
     public static synchronized void setBalanceMultiplier(
@@ -268,15 +285,88 @@ public final class MobletsConfig {
             BalanceStat stat,
             double multiplier
     ) {
-        if (!definition.balanceStats().contains(stat)) {
+        setBalanceMultiplier(
+                definition,
+                MobletProfile.WILD,
+                stat,
+                multiplier
+        );
+    }
+
+    public static synchronized void setBalanceMultiplier(
+            MobletDefinition definition,
+            MobletProfile profile,
+            BalanceStat stat,
+            double multiplier
+    ) {
+        if (!definition.supportsBalance(profile, stat)) {
             return;
         }
 
+        double value = Double.isFinite(multiplier)
+                ? multiplier
+                : 1.0D;
+
         entry(definition)
                 .setBalanceMultiplier(
+                        profile,
                         stat,
-                        multiplier
+                        value
                 );
+        advancedRevision++;
+    }
+
+    public static synchronized int blastRadius(
+            MobletDefinition definition,
+            MobletProfile profile
+    ) {
+        if (!definition.hasBlastRadius()
+                || (profile == MobletProfile.TAMED
+                && !definition.supportsTaming())) {
+            return 0;
+        }
+
+        return entry(definition)
+                .blastRadius(definition, profile);
+    }
+
+    public static synchronized void setBlastRadius(
+            MobletDefinition definition,
+            MobletProfile profile,
+            int radius
+    ) {
+        if (!definition.hasBlastRadius()
+                || (profile == MobletProfile.TAMED
+                && !definition.supportsTaming())) {
+            return;
+        }
+
+        entry(definition).setBlastRadius(profile, radius);
+        advancedRevision++;
+    }
+
+    public static synchronized void resetAdvanced(
+            MobletDefinition definition
+    ) {
+        if (!definition.hasAdvancedBalance()) {
+            return;
+        }
+
+        entry(definition).resetAdvanced(definition);
+        advancedRevision++;
+    }
+
+    public static synchronized void resetAllAdvanced() {
+        for (MobletDefinition definition
+                : MobletRegistry.advancedMoblets()) {
+            entry(definition).resetAdvanced(definition);
+        }
+
+        advancedRevision++;
+    }
+
+    public static synchronized long advancedRevision() {
+        return advancedRevision;
     }
 
     public static synchronized boolean encounterEnabled(
@@ -317,11 +407,13 @@ public final class MobletsConfig {
         );
 
         entry(definition);
+        advancedRevision++;
     }
 
     public static synchronized void resetAll() {
         data = new ConfigData();
         normalize();
+        advancedRevision++;
     }
 
     public static synchronized void save() {

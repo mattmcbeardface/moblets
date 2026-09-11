@@ -1,5 +1,7 @@
 package com.moblets;
 
+import com.moblets.balance.MobletBalance;
+
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -79,6 +81,8 @@ public final class BabySkeletons {
                 damage.addOrReplacePermanentModifier(BABY_WITHER_DAMAGE);
             }
         }
+
+        MobletBalance.initialize(skeleton);
     }
 
     public static void applyTamedStats(
@@ -93,21 +97,22 @@ public final class BabySkeletons {
          * explicit target rather than a percentage of each
          * vanilla mob's base health.
          *
-         * Skeleton:                 30 HP
-         * Stray / Bogged / Parched: 35 HP
-         * Wither Skeleton:          40 HP
+         * Skeleton / Stray / Wither Skeleton: 35 HP
+         * Bogged / Parched:                    28 HP
+         *
+         * Each target is 175% of the corresponding vanilla
+         * adult's max health.
          */
         double targetHealth;
 
-        if (skeleton.getType() == EntityTypes.SKELETON) {
-            targetHealth = 30.0D;
-        } else if (skeleton.getType() == EntityTypes.STRAY
-                || skeleton.getType() == EntityTypes.BOGGED
-                || skeleton.getType() == EntityTypes.PARCHED) {
+        if (skeleton.getType() == EntityTypes.SKELETON
+                || skeleton.getType() == EntityTypes.STRAY
+                || skeleton.getType()
+                        == EntityTypes.WITHER_SKELETON) {
             targetHealth = 35.0D;
-        } else if (skeleton.getType()
-                == EntityTypes.WITHER_SKELETON) {
-            targetHealth = 40.0D;
+        } else if (skeleton.getType() == EntityTypes.BOGGED
+                || skeleton.getType() == EntityTypes.PARCHED) {
+            targetHealth = 28.0D;
         } else {
             return;
         }

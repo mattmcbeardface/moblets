@@ -1,6 +1,8 @@
 package com.moblets.mixin;
 
 import com.moblets.BabyPillagers;
+import com.moblets.balance.MobletBalance;
+import com.moblets.registry.BalanceStat;
 import com.moblets.taming.MobletTameState;
 import net.minecraft.world.entity.monster.illager.Pillager;
 import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
@@ -32,13 +34,23 @@ public abstract class AbstractArrowMixin {
                  * Tamed Pillager Moblets hit substantially harder
                  * than a vanilla adult Pillager.
                  */
-                return vanillaDamage * 1.50F;
+                return vanillaDamage
+                        * 1.50F
+                        * (float) MobletBalance.multiplier(
+                                pillager,
+                                BalanceStat.DAMAGE
+                        );
             }
 
             /*
              * Wild babies remain deliberately weaker.
              */
-            return vanillaDamage * 0.50F;
+            return vanillaDamage
+                    * 0.50F
+                    * (float) MobletBalance.multiplier(
+                            pillager,
+                            BalanceStat.DAMAGE
+                    );
         }
 
         return vanillaDamage;

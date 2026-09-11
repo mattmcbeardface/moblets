@@ -1,5 +1,6 @@
 package com.moblets;
 
+import com.moblets.balance.MobletBalance;
 import com.moblets.config.MobletsConfig;
 
 import net.minecraft.server.MinecraftServer;
@@ -92,6 +93,8 @@ public final class BabyPillagers {
         if (damage != null) {
             damage.addOrReplacePermanentModifier(BABY_DAMAGE);
         }
+
+        MobletBalance.initialize(pillager);
     }
 
     public static void applyTamedStats(Pillager pillager) {

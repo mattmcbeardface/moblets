@@ -3,6 +3,8 @@ package com.moblets;
 import java.util.EnumSet;
 import java.util.List;
 
+import com.moblets.taming.MobletTargeting;
+
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
@@ -50,7 +52,10 @@ public final class BabySkeletonWolfFleeGoal extends Goal {
 
     @Override
     public boolean canUse() {
-        if (!BabySkeletons.isBaby(this.skeleton)) {
+        if (!shouldAvoidWolves(
+                BabySkeletons.isBaby(this.skeleton),
+                MobletTargeting.isTamedMoblet(this.skeleton)
+        )) {
             return false;
         }
 
@@ -98,7 +103,12 @@ public final class BabySkeletonWolfFleeGoal extends Goal {
 
     @Override
     public boolean canContinueToUse() {
-        return BabySkeletons.isBaby(this.skeleton)
+        return shouldAvoidWolves(
+                        BabySkeletons.isBaby(this.skeleton),
+                        MobletTargeting.isTamedMoblet(
+                                this.skeleton
+                        )
+                )
                 && BabySkeletons.hasLearnedWolfLesson(
                         this.skeleton
                 )
@@ -106,6 +116,13 @@ public final class BabySkeletonWolfFleeGoal extends Goal {
                 && this.wolf.isAlive()
                 && this.skeleton.distanceToSqr(this.wolf)
                         < RESET_DISTANCE_SQR;
+    }
+
+    static boolean shouldAvoidWolves(
+            boolean babySkeleton,
+            boolean tamedMoblet
+    ) {
+        return babySkeleton && !tamedMoblet;
     }
 
     @Override

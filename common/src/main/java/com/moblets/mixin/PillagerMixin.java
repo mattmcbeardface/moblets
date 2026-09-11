@@ -1,6 +1,7 @@
 package com.moblets.mixin;
 
 import com.moblets.BabyPillagers;
+import com.moblets.balance.MobletBalance;
 import com.moblets.taming.MobletTameState;
 import com.moblets.taming.MobletCuriosityGoal;
 import com.moblets.taming.MobletFollowOwnerGoal;
@@ -167,6 +168,11 @@ public abstract class PillagerMixin
                                 adultInaccuracy * 0.50F
                         );
             }
+
+            inaccuracy = MobletBalance.adjustedInaccuracy(
+                    pillager,
+                    inaccuracy
+            );
 
             crossbow.performShooting(
                     pillager.level(),

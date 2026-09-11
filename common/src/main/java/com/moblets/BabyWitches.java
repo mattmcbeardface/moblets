@@ -1,5 +1,7 @@
 package com.moblets;
 
+import com.moblets.balance.MobletBalance;
+
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -43,6 +45,8 @@ public final class BabyWitches {
         if (speed != null) {
             speed.addOrReplacePermanentModifier(BABY_SPEED);
         }
+
+        MobletBalance.initialize(witch);
     }
 
     public static void applyTamedStats(Witch witch) {
