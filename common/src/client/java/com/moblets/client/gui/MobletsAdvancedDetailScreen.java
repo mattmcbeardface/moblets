@@ -262,7 +262,7 @@ public final class MobletsAdvancedDetailScreen extends Screen {
     @Override
     public void onClose() {
         MobletsConfig.save();
-        this.minecraft.gui.setScreen(this.parent);
+        this.minecraft.setScreen(this.parent);
     }
 
     private final class SettingsList

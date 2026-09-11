@@ -6,7 +6,6 @@ import com.moblets.registry.MobletRegistry;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.monster.skeleton.AbstractSkeleton;
 
 public final class MobletTargeting {

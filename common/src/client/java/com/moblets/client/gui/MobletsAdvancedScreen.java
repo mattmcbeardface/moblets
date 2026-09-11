@@ -171,7 +171,7 @@ public final class MobletsAdvancedScreen extends Screen {
     @Override
     public void onClose() {
         MobletsConfig.save();
-        this.minecraft.gui.setScreen(this.parent);
+        this.minecraft.setScreen(this.parent);
     }
 
     private final class MobletList
@@ -222,7 +222,7 @@ public final class MobletsAdvancedScreen extends Screen {
                 this.configureButton = Button.builder(
                                 CONFIGURE,
                                 button -> Minecraft.getInstance()
-                                        .gui.setScreen(
+                                        .setScreen(
                                                 new MobletsAdvancedDetailScreen(
                                                         MobletsAdvancedScreen.this,
                                                         definition

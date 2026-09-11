@@ -106,7 +106,7 @@ public final class MobletsConfigScreen extends Screen {
         this.addRenderableWidget(
                 Button.builder(
                                 categoryTitle,
-                                button -> this.minecraft.gui.setScreen(
+                                button -> this.minecraft.setScreen(
                                         screenFactory.get()
                                 )
                         )
@@ -156,6 +156,6 @@ public final class MobletsConfigScreen extends Screen {
 
     @Override
     public void onClose() {
-        this.minecraft.gui.setScreen(this.parent);
+        this.minecraft.setScreen(this.parent);
     }
 }
