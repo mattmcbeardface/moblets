@@ -1,6 +1,8 @@
 package com.moblets.mixin;
 
 import com.moblets.BabyWitches;
+import com.moblets.balance.MobletBalance;
+import com.moblets.registry.BalanceStat;
 import com.moblets.taming.MobletWitchFleeGoal;
 import com.moblets.taming.MobletTameState;
 import org.spongepowered.asm.mixin.Unique;
@@ -260,7 +262,10 @@ public abstract class WitchMixin
                 dy,
                 dz,
                 0.75F,
-                0.10F
+                MobletBalance.adjustedInaccuracy(
+                        witch,
+                        0.10F
+                )
         );
 
         this.moblets$nextSupportHealTick =
@@ -364,7 +369,10 @@ public abstract class WitchMixin
                 (Witch) (Object) this;
 
         if (BabyWitches.isBaby(witch)) {
-            return 40.0F;
+            return MobletBalance.adjustedInaccuracy(
+                    witch,
+                    40.0F
+            );
         }
 
         return vanillaInaccuracy;
@@ -388,6 +396,10 @@ public abstract class WitchMixin
             potionStack.set(
                     DataComponents.POTION_DURATION_SCALE,
                     0.5F
+                            * (float) MobletBalance.multiplier(
+                                    witch,
+                                    BalanceStat.DAMAGE
+                            )
             );
         }
 

@@ -1,5 +1,6 @@
 package com.moblets;
 
+import com.moblets.balance.MobletBalance;
 import com.moblets.config.MobletsConfig;
 import com.moblets.registry.EncounterRegistry;
 
@@ -104,6 +105,8 @@ public final class BabyIronGolems {
         if (damage != null) {
             damage.addOrReplacePermanentModifier(BABY_DAMAGE);
         }
+
+        MobletBalance.initialize(ironGolem);
     }
 
     public static boolean isBaby(IronGolem ironGolem) {

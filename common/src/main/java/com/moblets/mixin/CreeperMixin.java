@@ -2,6 +2,7 @@ package com.moblets.mixin;
 
 import com.moblets.BabyCreeperFleeGoal;
 import com.moblets.BabyCreepers;
+import com.moblets.balance.MobletBalance;
 import com.moblets.taming.MobletCreeperAttackGoal;
 import com.moblets.taming.MobletCreeperGuardGoal;
 import com.moblets.taming.MobletCreeperState;
@@ -202,16 +203,17 @@ public abstract class CreeperMixin
                 (ServerLevel) creeper.level();
 
         /*
-         * Baby Creepers already use radius 2. Charged Creepers
-         * retain vanilla's doubled blast radius.
+         * Use the configured Tamed Moblet base radius. Charged
+         * Creepers retain vanilla's doubled blast radius.
          *
          * ExplosionInteraction.NONE guarantees zero terrain or
          * block destruction.
          */
-        float radius =
-                creeper.isPowered()
-                        ? 4.0F
-                        : 2.0F;
+        float radius = MobletBalance.blastRadius(creeper);
+
+        if (creeper.isPowered()) {
+            radius *= 2.0F;
+        }
 
         level.explode(
                 creeper,

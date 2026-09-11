@@ -4,6 +4,7 @@ import com.moblets.BabyCreepers;
 import com.moblets.BabyPillagers;
 import com.moblets.BabySkeletons;
 import com.moblets.BabyWitches;
+import com.moblets.balance.MobletBalance;
 
 import com.moblets.config.MobletsConfig;
 import com.moblets.registry.MobletDefinition;
@@ -223,6 +224,8 @@ public final class MobletTaming {
                         witch
                 );
             }
+
+            MobletBalance.forceRefresh(mob);
 
             state.moblets$setCuriousPlayerUuid(null);
         }

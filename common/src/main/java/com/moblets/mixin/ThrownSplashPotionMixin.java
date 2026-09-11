@@ -1,6 +1,8 @@
 package com.moblets.mixin;
 
 import com.moblets.BabyWitches;
+import com.moblets.balance.MobletBalance;
+import com.moblets.registry.BalanceStat;
 import com.moblets.taming.MobletTameState;
 
 import net.minecraft.world.entity.monster.Witch;
@@ -40,7 +42,12 @@ public abstract class ThrownSplashPotionMixin {
                 && !((MobletTameState) witch)
                         .moblets$isTamed()) {
 
-            return vanillaScale * 0.5D;
+            return vanillaScale
+                    * 0.5D
+                    * MobletBalance.multiplier(
+                            witch,
+                            BalanceStat.DAMAGE
+                    );
         }
 
         return vanillaScale;

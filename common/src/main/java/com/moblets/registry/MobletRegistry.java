@@ -49,6 +49,9 @@ public final class MobletRegistry {
                             EntityType.SKELETON,
                             mob -> BabySkeletons.applyBaby(
                                     (AbstractSkeleton) mob
+                            ),
+                            mob -> BabySkeletons.isBaby(
+                                    (AbstractSkeleton) mob
                             )
                     )
                     .randomSpawn(DEFAULT_RANDOM_SPAWN_CHANCE)
@@ -68,6 +71,9 @@ public final class MobletRegistry {
                             "Stray",
                             EntityType.STRAY,
                             mob -> BabySkeletons.applyBaby(
+                                    (AbstractSkeleton) mob
+                            ),
+                            mob -> BabySkeletons.isBaby(
                                     (AbstractSkeleton) mob
                             )
                     )
@@ -89,6 +95,9 @@ public final class MobletRegistry {
                             EntityType.BOGGED,
                             mob -> BabySkeletons.applyBaby(
                                     (AbstractSkeleton) mob
+                            ),
+                            mob -> BabySkeletons.isBaby(
+                                    (AbstractSkeleton) mob
                             )
                     )
                     .randomSpawn(DEFAULT_RANDOM_SPAWN_CHANCE)
@@ -108,6 +117,9 @@ public final class MobletRegistry {
                             "Parched",
                             EntityType.PARCHED,
                             mob -> BabySkeletons.applyBaby(
+                                    (AbstractSkeleton) mob
+                            ),
+                            mob -> BabySkeletons.isBaby(
                                     (AbstractSkeleton) mob
                             )
                     )
@@ -129,6 +141,9 @@ public final class MobletRegistry {
                             EntityType.WITHER_SKELETON,
                             mob -> BabySkeletons.applyBaby(
                                     (AbstractSkeleton) mob
+                            ),
+                            mob -> BabySkeletons.isBaby(
+                                    (AbstractSkeleton) mob
                             )
                     )
                     .randomSpawn(DEFAULT_RANDOM_SPAWN_CHANCE)
@@ -148,6 +163,9 @@ public final class MobletRegistry {
                             EntityType.CREEPER,
                             mob -> BabyCreepers.applyBaby(
                                     (Creeper) mob
+                            ),
+                            mob -> BabyCreepers.isBaby(
+                                    (Creeper) mob
                             )
                     )
                     .randomSpawn(DEFAULT_RANDOM_SPAWN_CHANCE)
@@ -157,6 +175,7 @@ public final class MobletRegistry {
                             DAMAGE,
                             MOVEMENT_SPEED
                     )
+                    .blastRadius(2)
                     .build()
     );
 
@@ -166,6 +185,9 @@ public final class MobletRegistry {
                             "Enderman",
                             EntityType.ENDERMAN,
                             mob -> BabyEndermen.applyBaby(
+                                    (EnderMan) mob
+                            ),
+                            mob -> BabyEndermen.isBaby(
                                     (EnderMan) mob
                             )
                     )
@@ -185,6 +207,9 @@ public final class MobletRegistry {
                             EntityType.WITCH,
                             mob -> BabyWitches.applyBaby(
                                     (Witch) mob
+                            ),
+                            mob -> BabyWitches.isBaby(
+                                    (Witch) mob
                             )
                     )
                     .randomSpawn(DEFAULT_RANDOM_SPAWN_CHANCE)
@@ -192,6 +217,11 @@ public final class MobletRegistry {
                     .advanced(
                             HEALTH,
                             DAMAGE,
+                            MOVEMENT_SPEED,
+                            ACCURACY
+                    )
+                    .tamedAdvanced(
+                            HEALTH,
                             MOVEMENT_SPEED,
                             ACCURACY
                     )
@@ -205,12 +235,14 @@ public final class MobletRegistry {
                             EntityType.CAMEL_HUSK,
                             mob -> BabyCamelHusks.applyBaby(
                                     (CamelHusk) mob
+                            ),
+                            mob -> BabyCamelHusks.isBaby(
+                                    (CamelHusk) mob
                             )
                     )
                     .randomSpawn(DEFAULT_RANDOM_SPAWN_CHANCE)
                     .advanced(
                             HEALTH,
-                            DAMAGE,
                             MOVEMENT_SPEED
                     )
                     .build()
@@ -222,6 +254,9 @@ public final class MobletRegistry {
                             "Pillager",
                             EntityType.PILLAGER,
                             mob -> BabyPillagers.applyBaby(
+                                    (Pillager) mob
+                            ),
+                            mob -> BabyPillagers.isBaby(
                                     (Pillager) mob
                             )
                     )
@@ -235,18 +270,6 @@ public final class MobletRegistry {
                     .build()
     );
 
-    public static final MobletDefinition SNOW_GOLEM = register(
-            MobletDefinition.builder(
-                            "snow_golem",
-                            "Snow Golem",
-                            EntityType.SNOW_GOLEM,
-                            mob -> BabySnowGolems.applyBaby(
-                                    (SnowGolem) mob
-                            )
-                    )
-                    .build()
-    );
-
     public static final MobletDefinition IRON_GOLEM = register(
             MobletDefinition.builder(
                             "iron_golem",
@@ -254,7 +277,34 @@ public final class MobletRegistry {
                             EntityType.IRON_GOLEM,
                             mob -> BabyIronGolems.applyBaby(
                                     (IronGolem) mob
+                            ),
+                            mob -> BabyIronGolems.isBaby(
+                                    (IronGolem) mob
                             )
+                    )
+                    .advanced(
+                            HEALTH,
+                            DAMAGE,
+                            MOVEMENT_SPEED
+                    )
+                    .build()
+    );
+
+    public static final MobletDefinition SNOW_GOLEM = register(
+            MobletDefinition.builder(
+                            "snow_golem",
+                            "Snow Golem",
+                            EntityType.SNOW_GOLEM,
+                            mob -> BabySnowGolems.applyBaby(
+                                    (SnowGolem) mob
+                            ),
+                            mob -> BabySnowGolems.isBaby(
+                                    (SnowGolem) mob
+                            )
+                    )
+                    .advanced(
+                            HEALTH,
+                            MOVEMENT_SPEED
                     )
                     .build()
     );
@@ -266,7 +316,14 @@ public final class MobletRegistry {
                             EntityType.WANDERING_TRADER,
                             mob -> BabyWanderingTraders.applyBaby(
                                     (WanderingTrader) mob
+                            ),
+                            mob -> BabyWanderingTraders.isBaby(
+                                    (WanderingTrader) mob
                             )
+                    )
+                    .advanced(
+                            HEALTH,
+                            MOVEMENT_SPEED
                     )
                     .build()
     );

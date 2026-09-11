@@ -8,8 +8,11 @@ import com.moblets.BabySkeletons;
 import com.moblets.BabyCreepers;
 import com.moblets.BabyPillagers;
 import com.moblets.BabyWitches;
+import com.moblets.balance.MobletBalance;
+import com.moblets.balance.MobletBalanceState;
 import com.moblets.taming.MobletTameState;
 import com.moblets.taming.MobletTaming;
+import com.moblets.taming.MobletTargeting;
 import com.moblets.taming.MobletWitchMerchant;
 
 import net.minecraft.network.chat.Component;
@@ -42,7 +45,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Mob.class)
 public abstract class MobTameStateMixin
-        implements MobletTameState {
+        implements MobletTameState, MobletBalanceState {
 
     @Unique
     private static final String MOBLETS_OWNER_KEY =
@@ -101,6 +104,45 @@ public abstract class MobTameStateMixin
 
     @Unique
     private BlockPos moblets$stayAnchor;
+
+    @Unique
+    private boolean moblets$balanceActive;
+
+    @Unique
+    private long moblets$balanceRevision = Long.MIN_VALUE;
+
+    @Unique
+    private boolean moblets$balanceTamed;
+
+    @Override
+    public boolean moblets$isBalanceActive() {
+        return this.moblets$balanceActive;
+    }
+
+    @Override
+    public void moblets$activateBalance() {
+        this.moblets$balanceActive = true;
+        this.moblets$balanceRevision = Long.MIN_VALUE;
+    }
+
+    @Override
+    public long moblets$getBalanceRevision() {
+        return this.moblets$balanceRevision;
+    }
+
+    @Override
+    public boolean moblets$getBalanceTamed() {
+        return this.moblets$balanceTamed;
+    }
+
+    @Override
+    public void moblets$markBalanceApplied(
+            long revision,
+            boolean tamed
+    ) {
+        this.moblets$balanceRevision = revision;
+        this.moblets$balanceTamed = tamed;
+    }
 
     @Override
     public boolean moblets$isTamed() {
@@ -258,22 +300,71 @@ public abstract class MobTameStateMixin
             return;
         }
 
-        MobletTameState selfState =
-                (MobletTameState) mob;
-
-        if (selfState.moblets$isTamed()
-                && target instanceof MobletTameState targetState
-                && targetState.moblets$isTamed()) {
+        if (!MobletTargeting.canTarget(mob, target)
+                || MobletTargeting.isTamedMoblet(mob)
+                && MobletTargeting.isTamedMoblet(target)) {
 
             ci.cancel();
             return;
         }
+
+        MobletTameState selfState =
+                (MobletTameState) mob;
 
         if (mob instanceof Witch witch
                 && BabyWitches.isBaby(witch)
                 && selfState.moblets$isTamed()) {
 
             ci.cancel();
+        }
+    }
+
+    /*
+     * Combat targeting conditions and TargetGoal retention both
+     * consult Mob.canAttack. Rejecting friendly targets here keeps
+     * them out of nearest-target and retaliation searches instead
+     * of repeatedly acquiring and clearing them afterward.
+     */
+    @Inject(
+            method = "canAttack",
+            at = @At("HEAD"),
+            cancellable = true
+    )
+    private void moblets$rejectFriendlyExternalTarget(
+            LivingEntity target,
+            CallbackInfoReturnable<Boolean> cir
+    ) {
+        if (target != null
+                && !MobletTargeting.canTarget(
+                        (Mob) (Object) this,
+                        target
+                )) {
+            cir.setReturnValue(false);
+        }
+    }
+
+    /*
+     * A target can become friendly after acquisition when a wild
+     * Moblet is tamed. Clear that stale target on the attacker's
+     * next tick, including direct Iron Golem collision targets whose
+     * melee goal does not re-check Mob.canAttack while running.
+     */
+    @Inject(
+            method = "tick",
+            at = @At("HEAD")
+    )
+    private void moblets$clearNewlyFriendlyExternalTarget(
+            CallbackInfo ci
+    ) {
+        Mob mob = (Mob) (Object) this;
+        LivingEntity target = mob.getTarget();
+
+        if (!mob.level().isClientSide()
+                && target != null
+                && !MobletTargeting.canTarget(mob, target)) {
+            mob.setTarget(null);
+            mob.setAggressive(false);
+            mob.getNavigation().stop();
         }
     }
 
@@ -1206,6 +1297,16 @@ public abstract class MobTameStateMixin
             method = "tick",
             at = @At("TAIL")
     )
+    private void moblets$refreshAdvancedBalance(
+            CallbackInfo ci
+    ) {
+        MobletBalance.refresh((Mob) (Object) this);
+    }
+
+    @Inject(
+            method = "tick",
+            at = @At("TAIL")
+    )
     private void moblets$passiveTamedRegeneration(
             CallbackInfo ci
     ) {
@@ -1477,5 +1578,6 @@ public abstract class MobTameStateMixin
          */
         this.moblets$curiousPlayerUuid = null;
         moblets$clearConsideringTame();
+        MobletBalance.initializeLoaded(mob);
     }
 }

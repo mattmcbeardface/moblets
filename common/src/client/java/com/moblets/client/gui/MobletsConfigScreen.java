@@ -71,10 +71,7 @@ public final class MobletsConfigScreen extends Screen {
                 ADVANCED,
                 gridX + buttonWidth + GRID_SPACING,
                 gridY + CATEGORY_BUTTON_HEIGHT + GRID_SPACING,
-                () -> new MobletsCategoryScreen(
-                        this,
-                        ADVANCED
-                )
+                () -> new MobletsAdvancedScreen(this)
         );
 
         int doneWidth = Math.max(

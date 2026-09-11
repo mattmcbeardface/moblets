@@ -1,6 +1,8 @@
 package com.moblets.mixin;
 
 import com.moblets.BabySkeletons;
+import com.moblets.balance.MobletBalance;
+import com.moblets.registry.BalanceStat;
 import com.moblets.taming.MobletTameState;
 
 import net.minecraft.world.entity.monster.skeleton.AbstractSkeleton;
@@ -69,11 +71,17 @@ public abstract class AbstractSkeletonMixin {
         }
 
         if (babyMobs$isTamed(skeleton)) {
-            return vanillaInaccuracy
-                    * TAMED_INACCURACY_MULTIPLIER;
+            return MobletBalance.adjustedInaccuracy(
+                    skeleton,
+                    vanillaInaccuracy
+                            * TAMED_INACCURACY_MULTIPLIER
+            );
         }
 
-        return WILD_BABY_INACCURACY;
+        return MobletBalance.adjustedInaccuracy(
+                skeleton,
+                WILD_BABY_INACCURACY
+        );
     }
 
     @Redirect(
@@ -105,6 +113,11 @@ public abstract class AbstractSkeletonMixin {
                 babyMobs$isTamed(instance)
                         ? TAMED_DAMAGE_MULTIPLIER
                         : WILD_DAMAGE_MULTIPLIER;
+
+        multiplier *= (float) MobletBalance.multiplier(
+                instance,
+                BalanceStat.DAMAGE
+        );
 
         arrow.setBaseDamageFromMob(
                 power * multiplier
