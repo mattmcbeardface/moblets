@@ -13,6 +13,7 @@ modId="baby_mobs"
 version="${version}"
 displayName="Moblets"
 logoFile="assets/baby_mobs/icon.png"
+iconFile="assets/baby_mobs/icon.png"
 description='''Adds custom baby variants of Minecraft mobs with unique spawning, proportions, and behavior.'''
 
 [[dependencies.baby_mobs]]
